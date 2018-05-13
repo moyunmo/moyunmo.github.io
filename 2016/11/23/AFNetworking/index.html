@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>AFNetworking3.0源码阅读笔记 | Moyun Memory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="&amp;#x8BFB;&amp;#x8457;&amp;#x540D;&amp;#x6846;&amp;#x67B6;AFNetworking&amp;#x6E90;&amp;#x7801;&amp;#xFF0C;&amp;#x8BB0;&amp;#x4E0B;&amp;#x5FC3;&amp;#x5F97;">
+<meta name="keywords" content="AFNetworking">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AFNetworking3.0源码阅读笔记">
+<meta property="og:url" content="http://yoursite.com/2016/11/23/AFNetworking/index.html">
+<meta property="og:site_name" content="Moyun Memory">
+<meta property="og:description" content="&amp;#x8BFB;&amp;#x8457;&amp;#x540D;&amp;#x6846;&amp;#x67B6;AFNetworking&amp;#x6E90;&amp;#x7801;&amp;#xFF0C;&amp;#x8BB0;&amp;#x4E0B;&amp;#x5FC3;&amp;#x5F97;">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-03-14T02:54:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AFNetworking3.0源码阅读笔记">
+<meta name="twitter:description" content="&amp;#x8BFB;&amp;#x8457;&amp;#x540D;&amp;#x6846;&amp;#x67B6;AFNetworking&amp;#x6E90;&amp;#x7801;&amp;#xFF0C;&amp;#x8BB0;&amp;#x4E0B;&amp;#x5FC3;&amp;#x5F97;">
+  
+    <link rel="alternate" href="/atom.xml" title="Moyun Memory" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Moyun Memory</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">做牛B的产品，有追求的创造者</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-AFNetworking" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/11/23/AFNetworking/" class="article-date">
+  <time datetime="2016-11-23T06:12:16.000Z" itemprop="datePublished">2016-11-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      AFNetworking3.0源码阅读笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&#x8BFB;&#x8457;&#x540D;&#x6846;&#x67B6;AFNetworking&#x6E90;&#x7801;&#xFF0C;&#x8BB0;&#x4E0B;&#x5FC3;&#x5F97;</p>
+<a id="more"></a>
+<h2 id="&#x4E00;&#x3001;Method-Swizzling"><a href="#&#x4E00;&#x3001;Method-Swizzling" class="headerlink" title="&#x4E00;&#x3001;Method Swizzling"></a>&#x4E00;&#x3001;Method Swizzling</h2><p><strong>_AFURLSessionTaskSwizzling</strong>&#x4E2D;&#x5C06;NSURLSessionDataTask&#x7684;<strong>resume</strong>&#x548C;<strong>suspend</strong>&#x7ED9;&#x4EA4;&#x6362;&#x4E86;&#xFF0C;&#x53D1;&#x9001;&#x8BE5;&#x6D88;&#x606F;&#x65F6;&#x6DFB;&#x52A0;&#x4E86;&#x53D1;&#x9001;&#x901A;&#x77E5;&#xFF0C; &#x56E0;&#x4E3A;iOS7&#x548C;iOS8&#x4E2D;NSURLSessionTask&#x7C7B;&#x7684;&#x5B9E;&#x73B0;&#x6709;&#x6240;&#x4E0D;&#x540C;&#xFF0C;(__NSCFLocalSessionTask&#x7684;&#x7EE7;&#x627F;&#x5173;&#x7CFB;&#x4E0D;&#x4E00;&#x6837; <a href="https://github.com/AFNetworking/AFNetworking/pull/2702" target="_blank" rel="noopener">issue</a>)&#xFF0C;&#x9700;&#x8981;&#x904D;&#x5386;&#x7EE7;&#x627F;&#x94FE;&#x53BB;&#x67E5;&#x627E;&#x3002; </p>
+<pre class="prettyprint">
++ (void)load {
+    if (NSClassFromString(@&quot;NSURLSessionTask&quot;)) {
+        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
+        NSURLSession * session = [NSURLSession sessionWithConfiguration:configuration];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored &quot;-Wnonnull&quot;
+        NSURLSessionDataTask *localDataTask = [session dataTaskWithURL:nil];
+#pragma clang diagnostic pop
+        IMP originalAFResumeIMP = method_getImplementation(class_getInstanceMethod([self class], @selector(af_resume)));
+        Class currentClass = [localDataTask class];
+        while (class_getInstanceMethod(currentClass, @selector(resume))) {
+            Class superClass = [currentClass superclass];
+            IMP classResumeIMP = method_getImplementation(class_getInstanceMethod(currentClass, @selector(resume)));
+            IMP superclassResumeIMP = method_getImplementation(class_getInstanceMethod(superClass, @selector(resume)));
+            if (classResumeIMP != superclassResumeIMP &amp;&amp;
+                originalAFResumeIMP != classResumeIMP) {
+                [self swizzleResumeAndSuspendMethodForClass:currentClass];
+            }
+            currentClass = [currentClass superclass];
+        }
+        [localDataTask cancel];
+        [session finishTasksAndInvalidate];
+    }
+}
+
++ (void)swizzleResumeAndSuspendMethodForClass:(Class)theClass {
+    Method afResumeMethod = class_getInstanceMethod(self, @selector(af_resume));
+    Method afSuspendMethod = class_getInstanceMethod(self, @selector(af_suspend));
+    if (af_addMethod(theClass, @selector(af_resume), afResumeMethod)) {
+        af_swizzleSelector(theClass, @selector(resume), @selector(af_resume));
+    }
+    if (af_addMethod(theClass, @selector(af_suspend), afSuspendMethod)) {
+        af_swizzleSelector(theClass, @selector(suspend), @selector(af_suspend));
+    }
+}
+
+- (NSURLSessionTaskState)state {
+    NSAssert(NO, @&quot;State method should never be called in the actual dummy class&quot;);
+    return NSURLSessionTaskStateCanceling;
+}
+
+- (void)af_resume {
+    NSAssert([self respondsToSelector:@selector(state)], @&quot;Does not respond to state&quot;);
+    NSURLSessionTaskState state = [self state];
+    [self af_resume];
+    if (state != NSURLSessionTaskStateRunning) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:AFNSURLSessionTaskDidResumeNotification object:self];
+    }
+}
+
+- (void)af_suspend {
+    NSAssert([self respondsToSelector:@selector(state)], @&quot;Does not respond to state&quot;);
+    NSURLSessionTaskState state = [self state];
+    [self af_suspend];
+    if (state != NSURLSessionTaskStateSuspended) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:AFNSURLSessionTaskDidSuspendNotification object:self];
+    }
+}
+</pre>
+
+<h2 id="&#x4E8C;&#x3001;dispatch-semaphore"><a href="#&#x4E8C;&#x3001;dispatch-semaphore" class="headerlink" title="&#x4E8C;&#x3001;dispatch_semaphore"></a>&#x4E8C;&#x3001;dispatch_semaphore</h2><p><strong>AFURLSessionManager</strong>&#x4E2D;&#x5C06;getTasksWithCompletionHandler&#x7684;&#x5F02;&#x6B65;&#x6D88;&#x606F;&#x901A;&#x8FC7;&#x4FE1;&#x53F7;&#x91CF;&#x673A;&#x5236;&#x53D8;&#x4E3A;&#x540C;&#x6B65;&#x3002;</p>
+<p>dispatch_semaphore&#x5C31;&#x4E09;&#x4E2A;API</p>
+<p><strong>dispatch_semaphore_create(long value)</strong> &#x521B;&#x5EFA;semaphore<br><strong>dispatch_semaphore_wait(dispatch_semaphore_t dsema, dispatch_time_t timeout)</strong>  &#x7B49;&#x5F85;&#x4E00;&#x4E2A;&#x4FE1;&#x53F7;&#xFF0C;&#x4FE1;&#x53F7;&#x91CF;-1&#xFF0C;&#x76F4;&#x5230;&#x4FE1;&#x53F7;&#x91CF;&#x5927;&#x4E8E;0&#x65F6;&#x7EE7;&#x7EED;&#x6267;&#x884C;<br><strong>dispatch_semaphore_signal(dispatch_semaphore_t dsema)</strong> &#x53D1;&#x9001;&#x4E00;&#x4E2A;&#x4FE1;&#x53F7;&#xFF0C;&#x4FE1;&#x53F7;&#x91CF;+1</p>
+<pre>
+- (NSArray *)tasksForKeyPath:(NSString *)keyPath {
+    __block NSArray *tasks = nil;
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    [self.session getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
+        if ([keyPath isEqualToString:NSStringFromSelector(@selector(dataTasks))]) {
+            tasks = dataTasks;
+        } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(uploadTasks))]) {
+            tasks = uploadTasks;
+        } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(downloadTasks))]) {
+            tasks = downloadTasks;
+        } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(tasks))]) {
+            tasks = [@[dataTasks, uploadTasks, downloadTasks] valueForKeyPath:@&quot;@unionOfArrays.self&quot;];
+        }
+        dispatch_semaphore_signal(semaphore);
+    }];
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    return tasks;
+}
+</pre>
+
+<h2 id="&#x4E09;&#x3001;NSLock"><a href="#&#x4E09;&#x3001;NSLock" class="headerlink" title="&#x4E09;&#x3001;NSLock"></a>&#x4E09;&#x3001;NSLock</h2><p><strong>AFURLSessionManagerTaskDelegate</strong>&#x662F;&#x7BA1;&#x7406;&#x7F51;&#x7EDC;&#x8BF7;&#x6C42;&#x4FE1;&#x606F;&#xFF0C;&#x5E76;&#x5904;&#x7406;&#x5B8C;&#x6210;&#x8BF7;&#x6C42;&#x56DE;&#x8C03;&#x7684;&#xFF0C;&#x6BCF;&#x4E00;&#x4E2A;urlRequest&#x90FD;&#x4F1A;&#x751F;&#x6210;<strong>AFURLSessionManagerTaskDelegate</strong>&#x5B9E;&#x4F8B;&#x548C;<strong>NSURLSessionTask</strong>&#x5BF9;&#x8C61;&#xFF0C; &#x901A;&#x8FC7;&#x5B57;&#x5178;&#x5BF9;<strong>taskIdentifier</strong>&#x548C;<strong>AFURLSessionManagerTaskDelegate</strong>&#x5B9E;&#x4F8B;&#x8FDB;&#x884C;&#x5173;&#x8054;&#xFF0C;&#x5B57;&#x5178;&#x8D4B;&#x503C;&#x65F6;&#x4E3A;&#x4E86;&#x907F;&#x514D;&#x8D44;&#x6E90;&#x7ADE;&#x4E89;&#xFF0C;&#x4F5C;&#x8005;&#x91C7;&#x7528;<strong>NSLock</strong>&#x52A0;&#x9501;&#x7684;&#x65B9;&#x5F0F;&#x907F;&#x514D;&#x3002;</p>
+<pre>
+- (AFURLSessionManagerTaskDelegate *)delegateForTask:(NSURLSessionTask *)task {
+    NSParameterAssert(task);
+    AFURLSessionManagerTaskDelegate *delegate = nil;
+    [self.lock lock];
+    delegate = self.mutableTaskDelegatesKeyedByTaskIdentifier[@(task.taskIdentifier)];
+    [self.lock unlock];
+    return delegate;
+}
+</pre>
+
+<h2 id="&#x56DB;&#x3001;-dispatch-group"><a href="#&#x56DB;&#x3001;-dispatch-group" class="headerlink" title="&#x56DB;&#x3001; dispatch_group"></a>&#x56DB;&#x3001; dispatch_group</h2><p><strong>AFURLSessionManagerTaskDelegate</strong>&#x56DE;&#x8C03;&#x7ED3;&#x679C;&#x5904;&#x7406;&#x4E2D;&#x7528;&#x5230;&#x4E86;dispatch_group</p>
+<p><pre>  dispatch_group_async(manager.completionGroup ?: url_session_manager_completion_group(), manager.completionQueue ?: dispatch_get_main_queue(), ^{<br>        if (self.completionHandler) {<br>            self.completionHandler(task.response, responseObject, error);<br>        }<br>        dispatch_async(dispatch_get_main_queue(), ^{<br>            [[NSNotificationCenter defaultCenter] postNotificationName:AFNetworkingTaskDidCompleteNotification object:task userInfo:userInfo];<br>        });<br>  });<br></pre><br>&#x4E00;&#x5F00;&#x59CB;&#x6CA1;&#x770B;&#x660E;&#x767D;&#x7528;&#x4E86;group&#x5374;&#x6CA1;&#x6709;&#x7528;<strong>group_wait</strong>&#x6216;&#x8005;<strong>group_notify</strong>&#xFF0C;&#x4E0D;&#x8FC7;&#x5728;<strong>AFURLSessionManager</strong>&#x4E2D;&#x58F0;&#x660E;&#x4E86;&#x4E00;&#x4E2A;&#x5C5E;&#x6027;</p>
+<p><pre><br>@property (nonatomic, strong, nullable) dispatch_group_t completionGroup<br></pre><br>&#x6240;&#x4EE5;&#xFF0C;&#x8FD9;&#x91CC;&#x4F7F;&#x7528;group&#x7684;&#x610F;&#x4E49;&#x5E94;&#x8BE5;&#x662F;&#x65B9;&#x4FBF;&#x4F7F;&#x7528;&#x8005;&#x8C03;&#x7528;&#x7684;&#x65F6;&#x5019;&#x9700;&#x8981;&#x5BF9;&#x8BF7;&#x6C42;&#x6DFB;&#x52A0;&#x5230;group&#x4E2D;&#x5904;&#x7406;&#xFF0C;&#x6709;&#x673A;&#x4F1A;&#x76D1;&#x542C;&#x5230;<strong>completionHandler</strong>&#x7684;&#x56DE;&#x8C03;&#xFF0C;&#x5F88;&#x4EBA;&#x6027;&#x5316;&#x3002;</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/11/23/AFNetworking/" data-id="cjh4m8hmg0001fcv431rvn3vp" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AFNetworking/">AFNetworking</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/02/09/modify-the-theme/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          为maupassant主题加上google-code-prettify
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/11/01/block/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">深入理解Block</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AFNetworking/">AFNetworking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Block/">Block</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CocoaPods/">CocoaPods</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReactNative/">ReactNative</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReactNative-SDWebImage/">ReactNative,SDWebImage</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AFNetworking/" style="font-size: 10px;">AFNetworking</a> <a href="/tags/Block/" style="font-size: 10px;">Block</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/ReactNative/" style="font-size: 20px;">ReactNative</a> <a href="/tags/ReactNative-SDWebImage/" style="font-size: 10px;">ReactNative,SDWebImage</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/05/11/学习笔记 ： 图解HTTP(五)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/10/学习笔记 ： 图解HTTP(四)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/09/学习笔记 ： 图解HTTP(三)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/03/学习笔记 ： 图解HTTP(一)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/03/学习笔记 ： 图解HTTP(二)/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Moyun<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

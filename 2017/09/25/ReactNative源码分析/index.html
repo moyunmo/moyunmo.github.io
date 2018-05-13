@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>ReactNative源码分析 | Moyun Memory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="&amp;#x9879;&amp;#x76EE;&amp;#x4E2D;&amp;#x7528;&amp;#x5230;&amp;#x4E86;ReactNative,&amp;#x82B1;&amp;#x4E86;&amp;#x70B9;&amp;#x65F6;&amp;#x95F4;&amp;#x770B;&amp;#x4E86;&amp;#x4E0B;&amp;#x6E90;&amp;#x7801;&amp;#xFF0C;&amp;#x4EC5;&amp;#x505A;&amp;#x4E2A;&amp;#x4EBA;&amp;#x7B14;&amp;#x8BB0;&amp;#x7">
+<meta name="keywords" content="ReactNative">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ReactNative源码分析">
+<meta property="og:url" content="http://yoursite.com/2017/09/25/ReactNative源码分析/index.html">
+<meta property="og:site_name" content="Moyun Memory">
+<meta property="og:description" content="&amp;#x9879;&amp;#x76EE;&amp;#x4E2D;&amp;#x7528;&amp;#x5230;&amp;#x4E86;ReactNative,&amp;#x82B1;&amp;#x4E86;&amp;#x70B9;&amp;#x65F6;&amp;#x95F4;&amp;#x770B;&amp;#x4E86;&amp;#x4E0B;&amp;#x6E90;&amp;#x7801;&amp;#xFF0C;&amp;#x4EC5;&amp;#x505A;&amp;#x4E2A;&amp;#x4EBA;&amp;#x7B14;&amp;#x8BB0;&amp;#x7">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2017/09/25/ReactNative源码分析/rn1.png">
+<meta property="og:updated_time" content="2017-11-02T05:12:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ReactNative源码分析">
+<meta name="twitter:description" content="&amp;#x9879;&amp;#x76EE;&amp;#x4E2D;&amp;#x7528;&amp;#x5230;&amp;#x4E86;ReactNative,&amp;#x82B1;&amp;#x4E86;&amp;#x70B9;&amp;#x65F6;&amp;#x95F4;&amp;#x770B;&amp;#x4E86;&amp;#x4E0B;&amp;#x6E90;&amp;#x7801;&amp;#xFF0C;&amp;#x4EC5;&amp;#x505A;&amp;#x4E2A;&amp;#x4EBA;&amp;#x7B14;&amp;#x8BB0;&amp;#x7">
+<meta name="twitter:image" content="http://yoursite.com/2017/09/25/ReactNative源码分析/rn1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Moyun Memory" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Moyun Memory</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">做牛B的产品，有追求的创造者</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-ReactNative源码分析" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/09/25/ReactNative源码分析/" class="article-date">
+  <time datetime="2017-09-25T06:33:40.000Z" itemprop="datePublished">2017-09-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ReactNative源码分析
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&#x9879;&#x76EE;&#x4E2D;&#x7528;&#x5230;&#x4E86;ReactNative,&#x82B1;&#x4E86;&#x70B9;&#x65F6;&#x95F4;&#x770B;&#x4E86;&#x4E0B;&#x6E90;&#x7801;&#xFF0C;&#x4EC5;&#x505A;&#x4E2A;&#x4EBA;&#x7B14;&#x8BB0;&#x7528;&#x3002;<br><a id="more"></a></p>
+<p>&#x6839;&#x636E;&#x5B98;&#x65B9;&#x6587;&#x6863;&#x7684;&#x63CF;&#x8FF0;&#xFF0C;&#x4F7F;&#x7528;RN&#x7684;&#x65F6;&#x5019;&#x5165;&#x53E3;&#x51FA;&#x5728;RCTRootView,&#x521D;&#x59CB;&#x5316;&#x4E00;&#x4E2A;RN&#x7684;View&#xFF0C;&#x548C;UIView&#x4E00;&#x6837;&#xFF0C;</p>
+<pre class="prettyprint">
+RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation moduleName:@&quot;NeteaseCloudMusic&quot;
+initialProperties:nil
+launchOptions:launchOptions];
+</pre>
+&#x7136;&#x540E;native&#x9700;&#x8981;&#x66B4;&#x9732;&#x7ED9;JS&#x63A5;&#x53E3;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x53EA;&#x9700;&#x9075;&#x5FAA;<rctbridgemodule>&#x534F;&#x8BAE;&#xFF0C;&#x6CE8;&#x518C;moudle,&#x5B9E;&#x73B0;&#x63A5;&#x53E3;&#x5C31;&#x53EF;&#x4EE5;&#x4E86;
+<pre>
+@interface TDRNDemoTool()<rctbridgemodule>
+@end
+@implementation TDRNDemoTool
+
+RCT_EXPORT_MODULE(NativeTool);
+
+RCT_EXPORT_METHOD(presentAlbum)
+{
+  CMPhotoAlbumViewController *vc = [[CMPhotoAlbumViewController alloc] init];
+  UIViewController *rootVC = [TDNativeNavigator topViewController];
+  [rootVC presentViewController:vc animated:true completion:NULL];
+}
+
+RCT_EXPORT_METHOD(testCallbackEvent:(RCTResponseSenderBlock)callback)
+{
+  NSArray *array = @[[NSNull null],@{@&quot;testKey1&quot;:@&quot;testValue1&quot;}];
+  callback(array);
+}
+@end
+</rctbridgemodule></pre>
+&#x5728;JS&#x91CC;&#x76F4;&#x63A5;&#x4F7F;&#x7528;
+<pre>
+import { NativeModules } from &apos;react-native&apos;;
+var iosTool = NativeModules.NativeTool;
+iosTool.presentAlbum();
+</pre>
+
+<p>&#x5230;&#x6B64;&#x5C31;&#x53EF;&#x4EE5;&#x5B8C;&#x6210;ReactNative&#x7684;&#x4F7F;&#x7528;&#x4E86;&#x3002;</p>
+<h3 id="&#x521D;&#x59CB;&#x5316;&#x6E90;&#x7801;&#x521D;&#x63A2;"><a href="#&#x521D;&#x59CB;&#x5316;&#x6E90;&#x7801;&#x521D;&#x63A2;" class="headerlink" title="&#x521D;&#x59CB;&#x5316;&#x6E90;&#x7801;&#x521D;&#x63A2;"></a>&#x521D;&#x59CB;&#x5316;&#x6E90;&#x7801;&#x521D;&#x63A2;</h3><p>&#x6E90;&#x5934;&#x5728;RCTRootView,RCTRootView&#x91CC;&#x9762;&#x53EA;&#x6709;&#x4E00;&#x4E9B;&#x666E;&#x901A;View&#x7684;&#x57FA;&#x672C;&#x914D;&#x7F6E;&#xFF0C;&#x6838;&#x5FC3;&#x662F;&#x8D1F;&#x8D23;&#x521D;&#x59CB;&#x5316;&#x4E00;&#x4E2A;RCTBridge&#x5BF9;&#x8C61;,RCTBridge&#x521D;&#x59CB;&#x5316;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4E3B;&#x8981;&#x65B9;&#x6CD5;&#x5728;setUp&#x91CC;&#xFF0C;&#x6838;&#x5FC3;bridge&#x662F;RCTCxxBridge&#xFF0C;RN0.45&#x7248;&#x672C;&#x4E4B;&#x524D;&#x90FD;&#x662F;&#x4F7F;&#x7528;RCTBatchedBridge&#xFF0C;</p>
+<pre>
+Class batchedBridgeClass = objc_lookUpClass(&quot;RCTBatchedBridge&quot;);
+Class cxxBridgeClass = objc_lookUpClass(&quot;RCTCxxBridge&quot;);
+</pre>
+&#x8FD9;&#x4E2A;bridge&#x662F;native&#x548C;JS&#x901A;&#x4FE1;&#x7684;&#x6865;&#x6881;&#x3002;
+
+&#x6838;&#x5FC3;&#x7684;&#x521D;&#x59CB;&#x5316;&#x4FE1;&#x606F;&#x90FD;&#x5728;RCTCxxBridge.start()&#x91CC;&#x5B8C;&#x6210;&#x7684;&#x3002;
+&#x9996;&#x5148;&#xFF0C;&#x521D;&#x59CB;&#x5316;&#x4E86;&#x4E00;&#x4E2A;JS&#x7EBF;&#x7A0B;jsThread,&#x5E76;&#x4E14;&#x5F00;&#x542F;&#x4E86;runloop&#xFF0C;&#x8BA9;&#x8BE5;&#x7EBF;&#x7A0B;&#x4E00;&#x76F4;&#x5B58;&#x5728;,&#x4FDD;&#x8BC1;&#x8FD9;&#x4E2A;&#x7EBF;&#x7A0B;&#x4E0D;&#x4F1A;&#x6D88;&#x5931;&#xFF0C;&#x4E00;&#x76F4;&#x5FAA;&#x73AF;&#x3002;
+<pre>
+  _jsThread = [[NSThread alloc] initWithTarget:[self class]
+                                      selector:@selector(runRunLoop)
+                                        object:nil];
+  [_jsThread start];
+
++ (void)runRunLoop
+{
+  @autoreleasepool {
+    RCT_PROFILE_BEGIN_EVENT(RCTProfileTagAlways, @&quot;-[RCTCxxBridge runJSRunLoop] setup&quot;, nil);
+
+    // copy thread name to pthread name
+    pthread_setname_np([NSThread currentThread].name.UTF8String);
+
+    // Set up a dummy runloop source to avoid spinning
+    CFRunLoopSourceContext noSpinCtx = {0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+    CFRunLoopSourceRef noSpinSource = CFRunLoopSourceCreate(NULL, 0, &amp;noSpinCtx);
+    CFRunLoopAddSource(CFRunLoopGetCurrent(), noSpinSource, kCFRunLoopDefaultMode);
+    CFRelease(noSpinSource);
+
+    RCT_PROFILE_END_EVENT(RCTProfileTagAlways, @&quot;&quot;);
+
+    // run the run loop
+    while (kCFRunLoopRunStopped != CFRunLoopRunInMode(kCFRunLoopDefaultMode, ((NSDate *)[NSDate distantFuture]).timeIntervalSinceReferenceDate, NO)) {
+      RCTAssert(NO, @&quot;not reached assertion&quot;); // runloop spun. that&apos;s bad.
+    }
+  }
+}
+</pre>
+
+<p>&#x4E4B;&#x524D;&#x63D0;&#x5230;&#x7684;RCT_EXPORT_MODULE()&#x8FD9;&#x4E2A;&#x5B8F;&#x7684;&#x7C7B;&#xFF0C;&#x5185;&#x90E8;&#x5B9E;&#x73B0;&#x4E86;+load&#x65B9;&#x6CD5;&#xFF0C;&#x83B7;&#x53D6;&#x5230;&#x5F53;&#x524D;moudle&#x540D;&#xFF0C;&#x6CA1;&#x5199;&#x7684;&#x8BDD;&#x901A;&#x8FC7;NSStringFromClass&#x7C7B;&#x540D;&#x547D;&#x540D;moudle&#x540D;&#xFF0C;&#x6240;&#x6709;&#x5B9E;&#x73B0;&#x4FDD;&#x5B58;&#x5728;&#x4E00;&#x4E2A;&#x5168;&#x5C40;&#x7684;&#x9759;&#x6001;&#x6570;&#x7EC4;&#x4E2D;</p>
+<pre>static NSMutableArray<class> *RCTModuleClasses</class></pre>
+&#x5728;RCTCxxBridge.registerModulesForClasses&#x4E2D;&#x53BB;&#x5339;&#x914D;&#x914D;&#x7F6E;&#x4FE1;&#x606F;&#xFF0C; &#x6BCF;&#x4E2A;moudleName&#x5BF9;&#x7528;&#x4E00;&#x4E2A;RCTModuleData&#xFF0C;&#x4FDD;&#x5B58;&#x4E86;3&#x4EFD;&#x914D;&#x7F6E;&#x4FE1;&#x606F;&#xFF0C;_moduleDataByName&#x5B57;&#x5178;&#xFF08;moudleName:RCTModuleData&#xFF09;&#xFF0C;_moduleDataByID&#x6570;&#x7EC4;&#xFF08;moudleName&#xFF09;&#xFF0C;RCTModuleData&#x5B9E;&#x4F8B;_moduleClassesByID&#x6570;&#x7EC4;&#xFF08;RCTModuleData&#xFF09;&#x3002;
+
+&#x7136;&#x540E;&#x521B;&#x5EFA;&#x4E86;&#x4E00;&#x4E2A;group&#xFF0C;&#x8FD9;&#x4E2A;group&#x91CC;&#x5F02;&#x6B65;&#x505A;&#x4E86;&#x4E09;&#x4EF6;&#x4E8B;&#xFF1A;
+
+1&#xFF0C;&#x4E3A;RCTModuleData&#x8BBE;&#x7F6E;&#x5BF9;&#x5E94;&#x7684;instance&#x548C;bridge,
+&#x6838;&#x5FC3;&#x51FD;&#x6570;&#x5728;RCTCxxBridge._prepareModulesWithDispatchGroup()
+
+2&#xFF0C;&#x521D;&#x59CB;&#x5316;JSExecutorFactory
+&#x5BF9;C++&#x4E0D;&#x662F;&#x5F88;&#x4E86;&#x89E3;&#xFF0C;&#x5927;&#x610F;&#x4E3A;&#x5185;&#x90E8;&#x4F1A;&#x6301;&#x6709;&#x4E00;&#x4E2A;JSCExecutor &#x4E0E;JS&#x7684;&#x901A;&#x4FE1;
+
+3&#xFF0C;&#x52A0;&#x8F7D;bundle&#x6587;&#x4EF6;
+&#x901A;&#x8FC7;RCTJavaScriptLoader&#x52A0;&#x8F7D;bundle&#x6587;&#x4EF6;&#xFF0C;&#x5982;&#x679C;&#x662F;&#x52A0;&#x8F7D;&#x8FDC;&#x7A0B;&#x7684;bundle&#x901A;&#x8FC7;RCTMultipartDataTask&#x52A0;&#x8F7D;&#xFF0C;&#x5185;&#x90E8;&#x901A;&#x8FC7;NSURLSession&#x4E0B;&#x8F7D;&#x3002;
+
+3&#x4E2A;&#x5F02;&#x6B65;&#x4E8B;&#x4EF6;&#x6267;&#x884C;&#x5B8C;&#x6210;&#x4E4B;&#x540E;&#x4F1A;&#x8D70;dispatch_group_notify&#x51FD;&#x6570;&#xFF0C;&#x6267;&#x884C;js&#x811A;&#x672C;&#xFF0C;&#x6838;&#x5FC3;&#x51FD;&#x6570;&#x5728;RCTCxxBridge.executeSourceCode:sync:()
+
+js&#x4E2D;&#x662F;&#x600E;&#x4E48;&#x83B7;&#x53D6;&#x5230;&#x6211;&#x4EEC;&#x4E4B;&#x524D;&#x5728;native&#x7AEF;&#x5DF2;&#x7ECF;&#x751F;&#x6210;&#x597D;&#x7684;&apos;&#x914D;&#x7F6E;&#x8868;&apos;&#x4FE1;&#x606F;&#x7684;&#x5462;?&#x56E0;&#x4E3A;&#x5BF9;ObjectiveC++&#x4E0D;&#x662F;&#x7279;&#x522B;&#x4E86;&#x89E3;&#xFF0C;[issue](http://www.jianshu.com/p/931367388a8d)&#x4ECB;&#x7ECD;&#xFF0C;&#x901A;&#x8FC7;&#x4E0B;&#x9762;&#x7684;&#x8C03;&#x7528;&#x6808;&#xFF0C;JS&#x83B7;&#x53D6;native&#x7684;&#x65B9;&#x6CD5;&#x914D;&#x7F6E;&#x4FE1;&#x606F;&#x3002;
+<pre>
+    JSCExecutor::getNativeModule()
+     JSCNativeModules::getModule()
+      JSCNativeModules::createModule()
+       ModuleRegistry::getConfig()
+        RCTNativeModule::getMethods()
+         NSStringFromSelector(selector) hasPrefix:@&quot;rct_export&quot;(&#x521D;&#x59CB;&#x5316;RCTModuleMethod&#x4FE1;&#x606F;)
+</pre>
+
+
+<pre><code>folly::Optional&lt;Object&gt; JSCNativeModules::createModule(const std::string&amp; name, JSContextRef context) {
+  if (!m_genNativeModuleJS) {
+// &#x83B7;&#x53D6;js&#x4E2D;contenxt&#x4E2D;&#x7684;global
+    auto global = Object::getGlobalObject(context);  
+// &#x83B7;&#x53D6; global&#x4E2D;&#x7684;__fbGenNativeModule&#x5BF9;&#x8C61;
+    m_genNativeModuleJS = global.getProperty(&quot;__fbGenNativeModule&quot;).asObject();
+    m_genNativeModuleJS-&gt;makeProtected();
+  }
+
+ // &#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x6700;&#x7EC8;&#x4F1A;&#x8C03;&#x5230; RCTNativeModule::getMethods()&#x4E2D;,
+ // &#x53D6;&#x5F97;&#x4E4B;&#x524D;&#x4F7F;&#x7528;&#x5B8F;&#x66B4;&#x9732;&#x7684;&#x6240;&#x6709;&#x7684;&#x65B9;&#x6CD5;  -&gt; &#x524D;&#x7F00;&#x662F; &quot;__rct_export__&quot;
+ auto result = m_moduleRegistry-&gt;getConfig(name);
+
+
+  if (!result.hasValue()) {
+    return nullptr;
+  }
+// &#x8C03;&#x7528; js&#x4E2D;&#x7684;__fbGenNativeModule&#x65B9;&#x6CD5;, &#x5E76;&#x4E14;&#x4F20;&#x9012;&#x8FC7;&#x53BB;native&#x7AEF;&#x7684;&#x914D;&#x7F6E;&#x8868;, &#x7528;&#x4E8E;&#x7AEF;js&#x5904;&#x7406;
+  Value moduleInfo = m_genNativeModuleJS-&gt;callAsFunction({
+    Value::fromDynamic(context, result-&gt;config),
+    Value::makeNumber(context, result-&gt;index)
+  });
+  return moduleInfo.asObject().getProperty(&quot;module&quot;).asObject();
+}
+
+// &#x4E0B;&#x9762;&#x662F;&#x5BF9;&#x5E94;&#x7684;js&#x4E2D;&#x7684;&#x5904;&#x7406;, NativeModules.js
+// &#x66B4;&#x9732;&#x4E00;&#x4E2A;&#x5168;&#x5C40;&#x7684;&#x5C5E;&#x6027;&#x7ED9;native(&#x5C31;&#x662F;&#x4E0A;&#x9762;&#x6211;&#x4EEC;&#x8C03;&#x7528;&#x7684;js&#x4E2D;&#x7684;&#x65B9;&#x6CD5;, &#x89E6;&#x53D1;&#x4E86;&#x540E;&#x9762;&#x7684;js&#x540E;&#x53D6;&#x5230;native&#x7AEF;&#x7684;&#x914D;&#x7F6E;&#x8868;, &#x5E76;&#x4E14;&#x4FDD;&#x5B58;)
+// export this method as a global so we can call it from native
+global.__fbGenNativeModule = genModule;
+
+function genModule(...) {
+  // &#x83B7;&#x53D6;&#x5230;native&#x7AEF;&#x8C03;&#x7528;&#x65F6;&#x4F20;&#x9012;&#x8FC7;&#x6765;&#x7684;&#x914D;&#x7F6E;&#x4FE1;&#x606F;
+  const [moduleName, constants, methods, promiseMethods, syncMethods] = config;
+  const module = {};
+  // &#x904D;&#x5386; &#x6240;&#x6709;&#x7684;native&#x7684;&#x65B9;&#x6CD5;&#x5217;&#x8868;, &#x83B7;&#x53D6;&#x6240;&#x6709;native&#x7684;&#x65B9;&#x6CD5;&#x7684;&#x8BE6;&#x7EC6;&#x4FE1;&#x606F;
+  methods &amp;&amp; methods.forEach((methodName, methodID) =&gt; {
+    module[methodName] = genMethod(moduleID, methodID, methodType);
+  });
+
+}
+function genMethod(...) {
+  /// ...
+  // &#x8C03;&#x7528;&#x4E4B;&#x524D;native&#x7AEF;&#x5728;js&#x4E2D;&#x6CE8;&#x5165;&#x7684;&#x56DE;&#x8C03;, &#x83B7;&#x53D6;native&#x4E2D;&#x7684;&#x6240;&#x6709;&#x65B9;&#x6CD5;&#x7684;&#x8BE6;&#x7EC6;&#x4FE1;&#x606F;
+  return global.nativeCallSyncHook(moduleID, methodID, args);
+}
+</code></pre><p>group&#x6267;&#x884C;&#x5B8C;&#x6210;&#x540E;&#xFF0C;RN&#x7684;&#x521D;&#x59CB;&#x5316;&#x4E5F;&#x5C31;&#x6267;&#x884C;&#x5B8C;&#x6BD5;&#xFF0C;React&#x5C31;&#x4F1A;&#x5F00;&#x59CB;&#x8BA1;&#x7B97;&#x597D;&#x6240;&#x6709;&#x7684;&#x5E03;&#x5C40;&#x4FE1;&#x606F;, &#x4EE5;&#x53CA;Component&#x5C42;&#x7EA7;&#x5173;&#x7CFB;&#x7B49;, &#x7B49;&#x5F85;native&#x7AEF;&#x5B8C;&#x6210;&#x5BF9;&#x5E94;&#x7684;&#x771F;&#x6B63;&#x7684;&#x9875;&#x9762;&#x6E32;&#x67D3;&#x548C;&#x5E03;&#x5C40;&#x3002;</p>
+<h3 id="RN&#x7684;component&#x600E;&#x4E48;&#x8F6C;&#x6362;&#x6210;native&#x7684;View&#xFF1F;"><a href="#RN&#x7684;component&#x600E;&#x4E48;&#x8F6C;&#x6362;&#x6210;native&#x7684;View&#xFF1F;" class="headerlink" title="RN&#x7684;component&#x600E;&#x4E48;&#x8F6C;&#x6362;&#x6210;native&#x7684;View&#xFF1F;"></a>RN&#x7684;component&#x600E;&#x4E48;&#x8F6C;&#x6362;&#x6210;native&#x7684;View&#xFF1F;</h3><p>&#x4E0A;&#x9762;&#x63D0;&#x5230;&#x7684;group&#x91CC;&#x505A;&#x7684;&#x7B2C;&#x4E00;&#x4EF6;&#x4E8B;&#x513F;&#xFF0C;&#x4E3A;RCTModuleData&#x8BBE;&#x7F6E;&#x5BF9;&#x5E94;&#x7684;instance&#x548C;bridge&#xFF0C;&#x5728;RCTUIManager&#x8BBE;&#x7F6E;bridge&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4F1A;&#x505A;&#x4E00;&#x4E9B;&#x521D;&#x59CB;&#x5316;&#x64CD;&#x4F5C;&#x3002;RN&#x5BF9;&#x4E00;&#x4E9B;&#x7CFB;&#x7EDF;&#x7684;native View&#x90FD;&#x505A;&#x4E86;&#x5B50;&#x7C7B;&#x5316;&#xFF0C;&#x5728;&#x5B50;&#x7C7B;&#x5316;&#x7684;&#x540C;&#x65F6;&#x8FD9;&#x4E9B;view&#x90FD;&#x6709;&#x4E00;&#x4E2A;&#x7EE7;&#x627F;&#x81EA;RCTUIManager&#x7684;manager&#x3002;<br><img src="/2017/09/25/ReactNative&#x6E90;&#x7801;&#x5206;&#x6790;/rn1.png" alt=""></p>
+<p>&#x5982;&#x679C;&#x662F;RCTUIManager&#x7684;&#x5B50;&#x7C7B;&#xFF0C;&#x90FD;&#x521D;&#x59CB;&#x5316;&#x4E00;&#x4E2A;RCTComponentData&#x5BF9;&#x8C61;&#xFF0C;&#x4FDD;&#x5B58;&#x5728;&#x540D;&#x4E3A;_componentDataByName&#x7684;&#x5B57;&#x5178;&#x4E2D;&#x3002;</p>
+<pre><code>  // Get view managers from bridge
+  NSMutableDictionary *componentDataByName = [NSMutableDictionary new];
+  for (Class moduleClass in _bridge.moduleClasses) {
+    if ([moduleClass isSubclassOfClass:[RCTViewManager class]]) {
+      RCTComponentData *componentData = [[RCTComponentData alloc] initWithManagerClass:moduleClass
+                                                                                bridge:_bridge];
+      componentDataByName[componentData.name] = componentData;
+    }
+  }
+  _componentDataByName = [componentDataByName copy];
+</code></pre><p>&#x4FDD;&#x5B58;&#x5B8C;&#x6210;&#x4E4B;&#x540E;&#x4F1A;&#x901A;&#x8FC7;RCTUIManager.createView:viewName:rootTag:props:&#x65B9;&#x6CD5;&#x521B;&#x5EFA;view,&#x901A;&#x8FC7;viewName&#x4ECE;_componentDataByName&#x53D6;&#x51FA;&#x5BF9;&#x5E94;&#x7684;RCTComponentData&#xFF0C;&#x4ECE;RCTComponentData &#x4E2D;&#x4FDD;&#x5B58;&#x7684; _managerClass &#x53EF;&#x4EE5;&#x62FF;&#x5230;&#x5BF9;&#x5E94; View &#x7684; manager&#x6765;&#x521B;&#x5EFA;view&#x3002;&#x7136;&#x540E;&#x901A;&#x8FC7;&#x53CD;&#x5C04;&#x52A8;&#x6001;&#x7ED9;&#x5C5E;&#x6027;&#x8D4B;&#x503C;&#xFF0C;&#x6700;&#x7EC8;&#x5C06;&#x5B9E;&#x4F8B;&#x4FDD;&#x5B58;&#x5728;_viewRegistry&#x4E2D;&#x3002;</p>
+<pre><code>RCTComponentData *componentData = _componentDataByName[viewName];
+UIView *view = [componentData createViewWithTag:reactTag];
+uiManager-&gt;_viewRegistry[reactTag] = view;
+
+- (RCTViewManager *)manager
+{
+  if (!_manager) {
+    _manager = [_bridge moduleForClass:_managerClass];
+  }
+  return _manager;
+}
+</code></pre><p>&#x5230;&#x8FD9;&#x91CC;&#x6240;&#x6709;&#x7684;&#x663E;&#x793A;&#x529F;&#x80FD;&#x5DF2;&#x7ECF;&#x51C6;&#x5907;&#x597D;&#x4E86;&#xFF0C;&#x7B49;&#x6279;&#x5904;&#x7406;&#x5B8C;&#x6210;&#x4E4B;&#x540E;&#xFF0C;&#x4F1A;&#x8C03;&#x7528;<br><code>[bridge_ batchDidComplete];</code><br>&#x5728;&#x8FD9;&#x91CC;&#x4F1A;&#x904D;&#x5386;&#x6240;&#x6709;&#x7684;RCTModuleData&#x5728;JS&#x7EBF;&#x7A0B;&#x53BB;&#x8C03;&#x7528;batchDidComplete</p>
+<pre><code>- (void)batchDidComplete
+{
+ for (RCTModuleData *moduleData in _moduleDataByID) {
+    if (moduleData.implementsBatchDidComplete) {
+      [self dispatchBlock:^{
+        [moduleData.instance batchDidComplete];
+      } queue:moduleData.methodQueue];
+    }
+  }
+}
+
+
+- (void)batchDidComplete
+{
+     //Sets up animations, computes layout, creates UI mounting blocks for computed layout,
+     //runs these blocks and all other already existing blocks.
+}
+</code></pre><p>&#x4E00;&#x4E9B;JS&#x548C;C++&#x7684;&#x5904;&#x7406;&#x770B;&#x4E0D;&#x5927;&#x61C2;&#xFF0C;&#x7B49;&#x7EC6;&#x7EC6;&#x7814;&#x7A76;&#x597D;&#x518D;&#x66F4;&#x65B0;&#x3002;</p>
+<h2 id="OC&#x8C03;&#x7528;JS"><a href="#OC&#x8C03;&#x7528;JS" class="headerlink" title="OC&#x8C03;&#x7528;JS"></a>OC&#x8C03;&#x7528;JS</h2></rctbridgemodule>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/09/25/ReactNative源码分析/" data-id="cjh4m8hnf0004fcv4dscbu9xa" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ReactNative/">ReactNative</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/10/01/ReactNative之RCTImage图片框架/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          ReactNative之RCTImage图片加载框架源码解析
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/04/17/开始学习ruby/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">开始学习ruby</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AFNetworking/">AFNetworking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Block/">Block</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CocoaPods/">CocoaPods</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReactNative/">ReactNative</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReactNative-SDWebImage/">ReactNative,SDWebImage</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AFNetworking/" style="font-size: 10px;">AFNetworking</a> <a href="/tags/Block/" style="font-size: 10px;">Block</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/ReactNative/" style="font-size: 20px;">ReactNative</a> <a href="/tags/ReactNative-SDWebImage/" style="font-size: 10px;">ReactNative,SDWebImage</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/05/11/学习笔记 ： 图解HTTP(五)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/10/学习笔记 ： 图解HTTP(四)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/09/学习笔记 ： 图解HTTP(三)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/03/学习笔记 ： 图解HTTP(一)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/03/学习笔记 ： 图解HTTP(二)/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Moyun<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

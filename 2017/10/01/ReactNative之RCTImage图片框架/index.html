@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>ReactNative之RCTImage图片加载框架源码解析 | Moyun Memory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="RN&amp;#x7684;&amp;#x56FE;&amp;#x7247;&amp;#x52A0;&amp;#x8F7D;&amp;#x63A7;&amp;#x4EF6;&amp;#x662F;image&amp;#xFF0C;&amp;#x53EF;&amp;#x4EE5;&amp;#x52A0;&amp;#x8F7D;&amp;#x672C;&amp;#x5730;&amp;#x548C;&amp;#x8FDC;&amp;#x7A0B;&amp;#x56FE;&amp;#x7247;&amp;#xFF0C;&amp;#x76F4;&amp;#x63A5;&amp;#x8BBE;&amp;">
+<meta name="keywords" content="ReactNative">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ReactNative之RCTImage图片加载框架源码解析">
+<meta property="og:url" content="http://yoursite.com/2017/10/01/ReactNative之RCTImage图片框架/index.html">
+<meta property="og:site_name" content="Moyun Memory">
+<meta property="og:description" content="RN&amp;#x7684;&amp;#x56FE;&amp;#x7247;&amp;#x52A0;&amp;#x8F7D;&amp;#x63A7;&amp;#x4EF6;&amp;#x662F;image&amp;#xFF0C;&amp;#x53EF;&amp;#x4EE5;&amp;#x52A0;&amp;#x8F7D;&amp;#x672C;&amp;#x5730;&amp;#x548C;&amp;#x8FDC;&amp;#x7A0B;&amp;#x56FE;&amp;#x7247;&amp;#xFF0C;&amp;#x76F4;&amp;#x63A5;&amp;#x8BBE;&amp;">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2017/10/01/ReactNative之RCTImage图片框架/RCTImage1.png">
+<meta property="og:updated_time" content="2017-11-02T05:04:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ReactNative之RCTImage图片加载框架源码解析">
+<meta name="twitter:description" content="RN&amp;#x7684;&amp;#x56FE;&amp;#x7247;&amp;#x52A0;&amp;#x8F7D;&amp;#x63A7;&amp;#x4EF6;&amp;#x662F;image&amp;#xFF0C;&amp;#x53EF;&amp;#x4EE5;&amp;#x52A0;&amp;#x8F7D;&amp;#x672C;&amp;#x5730;&amp;#x548C;&amp;#x8FDC;&amp;#x7A0B;&amp;#x56FE;&amp;#x7247;&amp;#xFF0C;&amp;#x76F4;&amp;#x63A5;&amp;#x8BBE;&amp;">
+<meta name="twitter:image" content="http://yoursite.com/2017/10/01/ReactNative之RCTImage图片框架/RCTImage1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Moyun Memory" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Moyun Memory</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">做牛B的产品，有追求的创造者</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-ReactNative之RCTImage图片框架" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/10/01/ReactNative之RCTImage图片框架/" class="article-date">
+  <time datetime="2017-10-01T09:19:01.000Z" itemprop="datePublished">2017-10-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ReactNative之RCTImage图片加载框架源码解析
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>RN&#x7684;&#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x63A7;&#x4EF6;&#x662F;image&#xFF0C;&#x53EF;&#x4EE5;&#x52A0;&#x8F7D;&#x672C;&#x5730;&#x548C;&#x8FDC;&#x7A0B;&#x56FE;&#x7247;&#xFF0C;&#x76F4;&#x63A5;&#x8BBE;&#x7F6E;source&#x5C31;&#x53EF;&#x4EE5;&#x663E;&#x793A;&#x56FE;&#x7247;&#xFF0C;&#x901A;&#x8FC7;&#x6E90;&#x7801;&#x770B;&#x4E00;&#x4E0B;&#x5185;&#x90E8;&#x662F;&#x600E;&#x4E48;&#x5B9E;&#x73B0;&#x7684;&#x3002;&#xFF08;&#x57FA;&#x4E8E;0.48&#xFF0C;&#x4E0D;&#x540C;&#x7248;&#x672C;&#x53EF;&#x80FD;&#x6709;&#x5DEE;&#x5F02;&#xFF09;</p>
+<a id="more"></a>
+<pre><code>&lt;Image source={{uri:&apos;http://image.cmall.com/imgsrv/test.png&apos;}}  /&gt; 
+&lt;Image source= {require(&apos;./img/test.png&apos;)}/&gt;
+&lt;Image source= &apos;M001&apos;&gt;
+</code></pre><h2 id="Native&#x7AEF;&#x52A0;&#x8F7D;&#x6D41;&#x7A0B;"><a href="#Native&#x7AEF;&#x52A0;&#x8F7D;&#x6D41;&#x7A0B;" class="headerlink" title="Native&#x7AEF;&#x52A0;&#x8F7D;&#x6D41;&#x7A0B;"></a>Native&#x7AEF;&#x52A0;&#x8F7D;&#x6D41;&#x7A0B;</h2><p>&#x5F53;JS&#x91CC;&#x6709;imageView&#x7684;&#x65F6;&#x5019;&#xFF0C;native&#x4F1A;&#x901A;&#x8FC7;RCTUIManager.createView:&#x65B9;&#x6CD5;&#x521B;&#x5EFA;&#x5BF9;&#x5E94;&#x7684;RCTImageView,&#x63A5;&#x53D7;JS&#x4F20;&#x8FC7;&#x6765;&#x7684;json&#xFF0C;&#x7ECF;&#x8FC7;RCTConvert.NSURLRequest()&#x8F6C;&#x5316;&#xFF0C;&#x533A;&#x5206;bundle&#x4E2D;&#x7684;&#x56FE;&#xFF0C;&#x8FDC;&#x7A0B;url,&#x8FD8;&#x662F;native&#x672C;&#x5730;assets&#x7684;&#x56FE;&#x3002;</p>
+<pre><code>if (URL.scheme) { // Was a well-formed absolute URL
+  return URL;
+}
+
+// Assume that it&apos;s a local path
+path = path.stringByRemovingPercentEncoding;
+if ([path hasPrefix:@&quot;~&quot;]) {
+  // Path is inside user directory
+  path = path.stringByExpandingTildeInPath;
+} else if (!path.absolutePath) {
+  // Assume it&apos;s a resource path
+  path = [[NSBundle mainBundle].resourcePath stringByAppendingPathComponent:path];
+}
+</code></pre><p>&#x901A;&#x8FC7;props&#xFF08;&#x5305;&#x542B;URL&#x4EE5;&#x53CA;&#x5176;&#x4ED6;&#x914D;&#x7F6E;&#x4FE1;&#x606F;&#xFF09;&#x8D4B;&#x503C;&#x901A;&#x8FC7;&#x65B9;&#x6CD5;&#x53CD;&#x5C04;&#x751F;&#x6210;&#x4E00;&#x4E2A;RCTImageSource&#x7684;&#x5BF9;&#x8C61;,&#x548C;JS&#x7684;image&#x6807;&#x7B7E;&#x91CC;&#x7684;source&#x5BF9;&#x5E94;,&#x6BCF;&#x4E2A;url&#x90FD;&#x4F1A;&#x6709;&#x4E00;&#x4E2A;&#x5BF9;&#x5E94;&#x7684;RCTImageSource&#xFF0C;&#x8FD9;&#x4E2A;&#x5BF9;&#x8C61;&#x4EC5;&#x5B58;&#x50A8;&#x8FD9;url,size&#x548C;scale&#x4FE1;&#x606F;&#xFF0C;&#x8BBE;&#x7F6E;&#x5B8C;&#x6BD5;&#x901A;&#x8FC7;brige&#x627E;&#x5230;&#x5BF9;&#x5E94;&#x7684;imageLoader&#x5728;RCTImageView.reloadImage&#x751F;&#x6210;&#x4E00;&#x4E2A;&#x53EF;&#x4EE5;&#x53D6;&#x6D88;&#x7684;&#x4E0B;&#x8F7D;&#x5668;&#xFF0C;&#x6838;&#x5FC3;&#x5DE5;&#x4F5C;&#x5728;RCTImageLoader._loadImageOrDataWithURLRequest&#x5B8C;&#x6210;&#x3002;</p>
+<p>&#x9996;&#x5148;&#x627E;&#x5230;&#x5408;&#x9002;&#x7684;&#x4E0B;&#x8F7D;&#x5668;&#xFF0C;&#x5728;&#x6CE8;&#x518C;&#x7684;&#x7C7B;&#x4E2D;(&#x6240;&#x6709;&#x7CFB;&#x7EDF;&#x5B9E;&#x73B0;RCTBridgeModule&#x534F;&#x8BAE;&#x7684;&#x7C7B;&#x5305;&#x62EC;RN&#x6CE8;&#x518C;&#x7684;&#x548C;&#x7528;&#x6237;&#x81EA;&#x5DF1;&#x81EA;&#x5B9A;&#x4E49;&#x7684;&#x7C7B;)&#x901A;&#x8FC7;&#x9075;&#x5FAA;RCTImageURLLoader&#x534F;&#x8BAE;&#x7684;&#x6570;&#x7EC4;&#x4E2D;&#x4F18;&#x5148;&#x7EA7;&#x6700;&#x4F4E;&#x7684;&#xFF0C; &#x9ED8;&#x8BA4;&#x8BBE;&#x7F6E;&#x6700;&#x5927;&#x5E76;&#x53D1;4&#xFF0C;&#x6700;&#x5927;&#x89E3;&#x7801;2&#xFF0C;&#x6700;&#x5927;&#x89E3;&#x7801;&#x56FE;&#x7247;&#x5927;&#x5C0F;30MB&#xFF0C;&#x521D;&#x59CB;&#x5316;&#x4E00;&#x4E2A;&#x4E32;&#x884C;&#x961F;&#x5217;</p>
+<pre><code>if (!_loaders) {
+    // Get loaders, sorted in reverse priority order (highest priority first)
+    RCTAssert(_bridge, @&quot;Bridge not set&quot;);
+    _loaders = [[_bridge modulesConformingToProtocol:@protocol(RCTImageURLLoader)] sortedArrayUsingComparator:^NSComparisonResult(id&lt;RCTImageURLLoader&gt; a, id&lt;RCTImageURLLoader&gt; b) {
+        float priorityA = [a respondsToSelector:@selector(loaderPriority)] ? [a loaderPriority] : 0;
+        float priorityB = [b respondsToSelector:@selector(loaderPriority)] ? [b loaderPriority] : 0;
+        if (priorityA &gt; priorityB) {
+            return NSOrderedAscending;
+        } else if (priorityA &lt; priorityB) {
+            return NSOrderedDescending;
+        } else {
+            return NSOrderedSame;
+        }
+    }];
+}
+
+for (id&lt;RCTImageURLLoader&gt; loader in _loaders) {
+    if ([loader canLoadImageURL:URL]) {
+        return loader;
+    }
+}
+</code></pre><p>&#x4E0A;&#x8FF0;&#x901A;&#x8FC7;canLoadImageURL&#x51FD;&#x6570;&#x5224;&#x65AD;URL.fileURL&#x662F;&#x5426;&#x4E3A;&#x7A7A;&#xFF0C;&#x5982;&#x679C;&#x975E;&#x7A7A;&#xFF0C;&#x5219;&#x4F1A;&#x542F;&#x52A8;&#x672C;&#x5730;&#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x5668;&#xFF08;RCTLocalAssetImageLoader&#xFF09;&#xFF0C;&#x662F;&#x7A7A;&#x8868;&#x793A;&#x4E0D;&#x662F;&#x672C;&#x5730;&#x8DEF;&#x5F84;&#xFF0C;&#x662F;&#x8FDC;&#x7A0B;&#x8DEF;&#x5F84;&#x3002;&#x5982;&#x679C;&#x672A;&#x80FD;&#x627E;&#x5230;&#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x5668;&#xFF0C;&#x542F;&#x52A8;&#x7F51;&#x7EDC;&#x6A21;&#x5757;&#x6765;&#x4E0B;&#x8F7D;&#x56FE;&#x7247;,&#x4F7F;&#x7528;RCTNetworking&#xFF0C;&#x6838;&#x5FC3;&#x4EE3;&#x7801;&#x5728;RCTHTTPRequestHandle&#x4E2D;&#xFF0C;&#x5185;&#x90E8;&#x4F7F;&#x7528;NSURLSession&#x53BB;&#x4E0B;&#x8F7D;&#x56FE;&#x7247;&#x3002; &#x540C;&#x65F6;&#x628A;&#x4EFB;&#x52A1;&#x52A0;&#x5230;&#x4EFB;&#x52A1;&#x5904;&#x7406;&#x5BB9;&#x5668;&#x4E2D;&#x5904;&#x7406;&#x6700;&#x5927;&#x5E76;&#x53D1;&#x7684;&#x903B;&#x8F91;&#x3002;</p>
+<pre><code> if (loadHandler) {
+            .......
+ } else {
+        // Use networking module to load image
+        cancelLoad = [strongSelf _loadURLRequest:request
+                                   progressBlock:progressHandler
+                                 completionBlock:completionHandler];
+ }
+</code></pre><p>&#x56FE;&#x7247;&#x4E0B;&#x8F7D;&#x5B8C;&#x6210;&#x4E4B;&#x540E;&#xFF0C;&#x5982;&#x679C;  &#x7F13;&#x5B58;&#x7684;key&#x662F;(url|&#x56FE;&#x7247;&#x5BBD;|&#x56FE;&#x7247;&#x9AD8;|RCTResizeMode|&#x54CD;&#x5E94;&#x65F6;&#x95F4;)&#x62FC;&#x63A5;&#x800C;&#x6210;&#xFF0C;&#x901A;&#x8FC7;&#x8FD9;&#x4E2A;key&#x68C0;&#x67E5;&#x5185;&#x5B58;&#x7F13;&#x5B58;&#x91CC;&#x6709;&#x6CA1;&#x6709;&#x5BF9;&#x4E0B;&#x8F7D;&#x4E4B;&#x540E;&#x89E3;&#x7801;&#x540E;&#x56FE;&#x7247;&#x7684;&#x7F13;&#x5B58;&#xFF0C;&#x5982;&#x679C;&#x6709;&#xFF0C;&#x76F4;&#x63A5;&#x8FD4;&#x56DE;&#x3002; &#x5982;&#x679C;&#x6CA1;&#x6709;&#x5219;&#x521D;&#x59CB;&#x5316;&#x4E00;&#x4E2A;&#x89E3;&#x7801;&#x5668;&#x53BB;&#x89E3;&#x7801;&#x3002; &#x89E3;&#x7801;&#x64CD;&#x4F5C;&#x4E5F;&#x88AB;&#x52A0;&#x5165;&#x5230; &#x4EFB;&#x52A1;&#x6C60;&#x91CC;&#x9762; &#x63A7;&#x5236;&#x6700;&#x5927;&#x56FE;&#x7247;&#x52A0;&#x7801;&#x5E76;&#x53D1;&#x3002;</p>
+<p>&#x4E0B;&#x9762;&#x662F;RN&#x91CC;&#x7684;&#x56FE;&#x7247;&#x89E3;&#x7801;&#x6E90;&#x7801;&#xFF1A;</p>
+<pre><code>UIImage *__nullable RCTDecodeImageWithData(NSData *data,
+                                           CGSize destSize,
+                                           CGFloat destScale,
+                                           RCTResizeMode resizeMode)
+{
+  CGImageSourceRef sourceRef = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
+  if (!sourceRef) {
+    return nil;
+  }
+
+  // Get original image size
+  CFDictionaryRef imageProperties = CGImageSourceCopyPropertiesAtIndex(sourceRef, 0, NULL);
+  if (!imageProperties) {
+    CFRelease(sourceRef);
+    return nil;
+  }
+  NSNumber *width = CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelWidth);
+  NSNumber *height = CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelHeight);
+  CGSize sourceSize = {width.doubleValue, height.doubleValue};
+  CFRelease(imageProperties);
+
+  if (CGSizeEqualToSize(destSize, CGSizeZero)) {
+    destSize = sourceSize;
+    if (!destScale) {
+      destScale = 1;
+    }
+  } else if (!destScale) {
+    destScale = RCTScreenScale();
+  }
+
+  if (resizeMode == UIViewContentModeScaleToFill) {
+    // Decoder cannot change aspect ratio, so RCTResizeModeStretch is equivalent
+    // to RCTResizeModeCover for our purposes
+    resizeMode = RCTResizeModeCover;
+  }
+
+  // Calculate target size
+  CGSize targetSize = RCTTargetSize(sourceSize, 1, destSize, destScale, resizeMode, NO);
+  CGSize targetPixelSize = RCTSizeInPixels(targetSize, destScale);
+  CGFloat maxPixelSize = fmax(fmin(sourceSize.width, targetPixelSize.width),
+                              fmin(sourceSize.height, targetPixelSize.height));
+
+  NSDictionary&lt;NSString *, NSNumber *&gt; *options = @{
+    (id)kCGImageSourceShouldAllowFloat: @YES,
+    (id)kCGImageSourceCreateThumbnailWithTransform: @YES,
+    (id)kCGImageSourceCreateThumbnailFromImageAlways: @YES,
+    (id)kCGImageSourceThumbnailMaxPixelSize: @(maxPixelSize),
+  };
+
+  // Get thumbnail
+  CGImageRef imageRef = CGImageSourceCreateThumbnailAtIndex(sourceRef, 0, (__bridge CFDictionaryRef)options);
+  CFRelease(sourceRef);
+  if (!imageRef) {
+    return nil;
+  }
+
+  // Return image
+  UIImage *image = [UIImage imageWithCGImage:imageRef
+                                       scale:destScale
+                                 orientation:UIImageOrientationUp];
+  CGImageRelease(imageRef);
+  return image;
+}
+</code></pre><p>&#x89E3;&#x7801;&#x5B8C;&#x6210;&#x4E4B;&#x540E;&#x5B58;&#x5165;&#x5185;&#x5B58;&#x7F13;&#x5B58;&#xFF0C;&#x56DE;&#x8C03;&#x4E3B;&#x7EBF;&#x7A0B;&#x66F4;&#x65B0;&#x56FE;&#x7247;&#x3002;</p>
+<p>&#x4EE5;&#x4E0A;&#x5C31;&#x662F;native&#x7AEF;&#x7684;&#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x6D41;&#x7A0B;&#x3002;</p>
+<p>RN&#x52A0;&#x8F7D;&#x56FE;&#x7247;&#x63D0;&#x4F9B;&#x4E86;&#x5185;&#x5B58;&#x7F13;&#x5B58;&#xFF0C;&#x800C;&#x4E14;&#x4E5F;&#x4EC5;&#x4EC5;&#x4F9D;&#x9760;NSURLRequestCache&#x505A;&#x4E86;&#x7F13;&#x5B58;&#xFF0C;&#x671F;&#x95F4;&#x770B;&#x5230;&#x4E86;RCTImageStoreManager&#x8FD9;&#x4E2A;&#x7C7B;&#xFF0C;&#x4F46;&#x770B;&#x4E86;&#x6574;&#x4E2A;&#x5DE5;&#x7A0B;&#x5E76;&#x6CA1;&#x6709;&#x53D1;&#x73B0;&#x6709;&#x4EC0;&#x4E48;&#x5730;&#x65B9;&#x5728;&#x5F15;&#x7528;&#xFF0C;&#x4E5F;&#x53EF;&#x80FD;&#x662F;&#x6211;&#x6CA1;&#x627E;&#x5230;&#x5730;&#x65B9;&#xFF0C;&#x4E0D;&#x8FC7;&#x66B4;&#x9732;&#x4E86;&#x4E00;&#x4E9B;&#x65B9;&#x6CD5;&#x7ED9;JS&#x8C03;&#x7528;,&#x56E0;&#x4E3A;&#x542B;&#x6709;RCT_EXPORT_MODULE()&#x4EE3;&#x7801;&#x3002;</p>
+<p><img src="/2017/10/01/ReactNative&#x4E4B;RCTImage&#x56FE;&#x7247;&#x6846;&#x67B6;/RCTImage1.png" alt=""></p>
+<h2 id="&#x603B;&#x7ED3;"><a href="#&#x603B;&#x7ED3;" class="headerlink" title="&#x603B;&#x7ED3;"></a>&#x603B;&#x7ED3;</h2><p>Native&#x7AEF;&#x901A;&#x8FC7;JS&#x7ED9;&#x51FA;&#x7684;&#x56FE;&#x7247;&#x6807;&#x7B7E;&#x4EE5;&#x53CA;&#x6570;&#x636E;&#xFF0C;&#x901A;&#x8FC7;RCTConvert&#x533A;&#x5206;bundle&#x5185;&#x7684;&#x56FE;&#x3001;native&#x5DE5;&#x7A0B;&#x91CC;&#x7684;&#x56FE;&#x3001;&#x8FD8;&#x662F;&#x8FDC;&#x7A0B;url&#xFF0C;&#x6839;&#x636E;&#x4E0D;&#x540C;&#x7684;&#x56FE;&#x7247;&#x6765;&#x6E90;&#x542F;&#x52A8;&#x52A0;&#x8F7D;&#x5668;&#xFF0C;&#x5185;&#x90E8;&#x5B9E;&#x73B0;&#x4E86;RCTLocalAssetImageLoader&#x7684;&#x672C;&#x5730;&#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x548C;&#x901A;&#x8FC7;&#x7F51;&#x7EDC;&#x6A21;&#x5757;RCTNetworking&#x52A0;&#x8F7D;&#x8FDC;&#x7A0B;&#x56FE;&#x7247;&#xFF0C;&#x63D0;&#x4F9B;&#x4E86;&#x5185;&#x5B58;&#x7F13;&#x5B58;&#x548C;url&#x7F13;&#x5B58;&#x3002;</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/10/01/ReactNative之RCTImage图片框架/" data-id="cjh4m8hn40002fcv4924d6o96" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ReactNative/">ReactNative</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/10/28/把ReactNative的图片加载框架替换成SDWebImage/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          把ReactNative的图片加载框架替换成SDWebImage
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/09/25/ReactNative源码分析/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ReactNative源码分析</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AFNetworking/">AFNetworking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Block/">Block</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CocoaPods/">CocoaPods</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReactNative/">ReactNative</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReactNative-SDWebImage/">ReactNative,SDWebImage</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AFNetworking/" style="font-size: 10px;">AFNetworking</a> <a href="/tags/Block/" style="font-size: 10px;">Block</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/ReactNative/" style="font-size: 20px;">ReactNative</a> <a href="/tags/ReactNative-SDWebImage/" style="font-size: 10px;">ReactNative,SDWebImage</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/05/11/学习笔记 ： 图解HTTP(五)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/10/学习笔记 ： 图解HTTP(四)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/09/学习笔记 ： 图解HTTP(三)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/03/学习笔记 ： 图解HTTP(一)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/03/学习笔记 ： 图解HTTP(二)/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Moyun<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

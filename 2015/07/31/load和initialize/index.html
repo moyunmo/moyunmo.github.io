@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>也谈load和initialize | Moyun Memory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="&amp;#x9879;&amp;#x76EE;&amp;#x4E2D;&amp;#x6709;&amp;#x4E00;&amp;#x4E9B;&amp;#x7B2C;&amp;#x4E09;&amp;#x65B9;&amp;#x7684;&amp;#x6216;&amp;#x8005;&amp;#x81EA;&amp;#x5DF1;&amp;#x7CFB;&amp;#x7EDF;&amp;#x7684;&amp;#x65B9;&amp;#x6CD5;&amp;#x9700;&amp;#x8981;&amp;#x5728;&amp;#x7A0B;&amp;#x5E8F;&amp;#x52A0;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="也谈load和initialize">
+<meta property="og:url" content="http://yoursite.com/2015/07/31/load和initialize/index.html">
+<meta property="og:site_name" content="Moyun Memory">
+<meta property="og:description" content="&amp;#x9879;&amp;#x76EE;&amp;#x4E2D;&amp;#x6709;&amp;#x4E00;&amp;#x4E9B;&amp;#x7B2C;&amp;#x4E09;&amp;#x65B9;&amp;#x7684;&amp;#x6216;&amp;#x8005;&amp;#x81EA;&amp;#x5DF1;&amp;#x7CFB;&amp;#x7EDF;&amp;#x7684;&amp;#x65B9;&amp;#x6CD5;&amp;#x9700;&amp;#x8981;&amp;#x5728;&amp;#x7A0B;&amp;#x5E8F;&amp;#x52A0;">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-11-02T05:09:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="也谈load和initialize">
+<meta name="twitter:description" content="&amp;#x9879;&amp;#x76EE;&amp;#x4E2D;&amp;#x6709;&amp;#x4E00;&amp;#x4E9B;&amp;#x7B2C;&amp;#x4E09;&amp;#x65B9;&amp;#x7684;&amp;#x6216;&amp;#x8005;&amp;#x81EA;&amp;#x5DF1;&amp;#x7CFB;&amp;#x7EDF;&amp;#x7684;&amp;#x65B9;&amp;#x6CD5;&amp;#x9700;&amp;#x8981;&amp;#x5728;&amp;#x7A0B;&amp;#x5E8F;&amp;#x52A0;">
+  
+    <link rel="alternate" href="/atom.xml" title="Moyun Memory" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Moyun Memory</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">做牛B的产品，有追求的创造者</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-load和initialize" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/07/31/load和initialize/" class="article-date">
+  <time datetime="2015-07-31T07:55:30.000Z" itemprop="datePublished">2015-07-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      也谈load和initialize
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&#x9879;&#x76EE;&#x4E2D;&#x6709;&#x4E00;&#x4E9B;&#x7B2C;&#x4E09;&#x65B9;&#x7684;&#x6216;&#x8005;&#x81EA;&#x5DF1;&#x7CFB;&#x7EDF;&#x7684;&#x65B9;&#x6CD5;&#x9700;&#x8981;&#x5728;&#x7A0B;&#x5E8F;&#x52A0;&#x8F7D;&#x7684;&#x65F6;&#x5019;&#x521D;&#x59CB;&#x5316;&#xFF0C;&#x5F53;&#x7136;&#x7B2C;&#x4E00;&#x4E2A;&#x60F3;&#x5230;&#x7684;&#x662F;&#x5728;didFinishLaunchingWithOptions&#x4E2D;&#x521D;&#x59CB;&#x5316;&#xFF0C; &#x4F46;&#x662F;&#x5FC5;&#x987B;&#x8981;&#x5728;&#x8FD9;&#x4E2A;&#x4EE3;&#x7406;&#x65B9;&#x6CD5;&#x91CC;&#x5417;&#xFF1F; NSObject&#x4E2D;&#x7684;&#x4E24;&#x4E2A;&#x7C7B;&#x65B9;&#x6CD5;&#x4F1A;&#x5728;&#x542F;&#x52A8;&#x524D;&#x81EA;&#x52A8;&#x8C03;&#x7528;&#x3002; &#x4ED6;&#x4EEC;&#x662F; +(void)load &#x548C; +(void)initialize&#x3002;</p>
+<a id="more"></a>
+<h2 id="load&#x65B9;&#x6CD5;"><a href="#load&#x65B9;&#x6CD5;" class="headerlink" title="load&#x65B9;&#x6CD5;"></a>load&#x65B9;&#x6CD5;</h2><p>+(void)load  &#x65B9;&#x6CD5;&#x662F; NSObject &#x7684;&#x7C7B;&#x65B9;&#x6CD5;&#xFF0C;&#x82F9;&#x679C;&#x5B98;&#x65B9;API&#x5BF9;&#x5B83;&#x7684;&#x5B9A;&#x4E49;&#x662F;&#xFF1A;</p>
+<blockquote>
+<p>Invoked whenever a class or category is added to the Objective-C runtime; implement this method to perform class-specific behavior upon loading.</p>
+</blockquote>
+<p>&#x7B80;&#x5355;&#x6765;&#x8BF4;&#xFF0C;&#x5373;&#x5F53;&#x4E00;&#x4E2A;&#x7C7B;&#x6216;&#x8005;category&#x88AB;&#x52A0;&#x8F7D;&#x5230;Objective-C runtime&#x7684;&#x65F6;&#x5019;&#x4F1A;&#x8C03;&#x7528;&#xFF0C;&#x5B83;&#x52A8;&#x6001;&#x52A0;&#x8F7D;&#x548C;&#x9759;&#x6001;&#x94FE;&#x63A5;&#x7684;&#x6D88;&#x606F;&#x88AB;&#x53D1;&#x9001;&#x7ED9;&#x7C7B;&#x6216;&#x8005;category&#xFF0C;&#x610F;&#x601D;&#x5C31;&#x662F;&#x5B83;&#x4F1A;&#x5148;&#x4E8E;didFinishLaunchingWithOptions&#x8C03;&#x7528;&#xFF0C;&#x751A;&#x81F3;&#x5148;&#x4E8E;main&#x51FD;&#x6570;&#x8C03;&#x7528;&#xFF0C; &#x8FD9;&#x53EF;&#x80FD;&#x4F1A;&#x5F88;&#x6709;&#x610F;&#x601D;&#xFF0C; &#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x7ED9;&#x5E9E;&#x5927;&#x7684;Appdelegate&#x7626;&#x8EAB;&#xFF0C;&#x4E5F;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;Method Swizzling&#x9ED1;&#x9B54;&#x6CD5;&#x66FF;&#x6362;&#x7CFB;&#x7EDF;&#x7684;&#x65B9;&#x6CD5;&#x3002;</p>
+<h4 id="void-load&#x5148;&#x4E8E;main&#x51FD;&#x6570;&#x8C03;&#x7528;&#xFF0C;&#x6240;&#x4EE5;load&#x65B9;&#x6CD5;&#x91CC;&#x9762;&#x5E76;&#x6CA1;&#x6709;autoreleasepool-&#x6240;&#x4EE5;&#x9700;&#x8981;&#x4F7F;&#x7528;autoreleasepool&#x7684;&#x51FD;&#x6570;&#x90FD;&#x53EF;&#x80FD;&#x51FA;&#x73B0;&#x5F02;&#x5E38;&#x3002;"><a href="#void-load&#x5148;&#x4E8E;main&#x51FD;&#x6570;&#x8C03;&#x7528;&#xFF0C;&#x6240;&#x4EE5;load&#x65B9;&#x6CD5;&#x91CC;&#x9762;&#x5E76;&#x6CA1;&#x6709;autoreleasepool-&#x6240;&#x4EE5;&#x9700;&#x8981;&#x4F7F;&#x7528;autoreleasepool&#x7684;&#x51FD;&#x6570;&#x90FD;&#x53EF;&#x80FD;&#x51FA;&#x73B0;&#x5F02;&#x5E38;&#x3002;" class="headerlink" title="+ (void)load&#x5148;&#x4E8E;main&#x51FD;&#x6570;&#x8C03;&#x7528;&#xFF0C;&#x6240;&#x4EE5;load&#x65B9;&#x6CD5;&#x91CC;&#x9762;&#x5E76;&#x6CA1;&#x6709;autoreleasepool,&#x6240;&#x4EE5;&#x9700;&#x8981;&#x4F7F;&#x7528;autoreleasepool&#x7684;&#x51FD;&#x6570;&#x90FD;&#x53EF;&#x80FD;&#x51FA;&#x73B0;&#x5F02;&#x5E38;&#x3002;"></a>+ (void)load&#x5148;&#x4E8E;main&#x51FD;&#x6570;&#x8C03;&#x7528;&#xFF0C;&#x6240;&#x4EE5;load&#x65B9;&#x6CD5;&#x91CC;&#x9762;&#x5E76;&#x6CA1;&#x6709;autoreleasepool,&#x6240;&#x4EE5;&#x9700;&#x8981;&#x4F7F;&#x7528;autoreleasepool&#x7684;&#x51FD;&#x6570;&#x90FD;&#x53EF;&#x80FD;&#x51FA;&#x73B0;&#x5F02;&#x5E38;&#x3002;</h4><blockquote>
+<p>In addition:     A class&#x2019;s +load method is called after all of its superclasses&#x2019; +load methods.  A category +load method is called after the class&#x2019;s own +load method.</p>
+</blockquote>
+<p> &#x5373;+(void)load&#x7684;&#x6267;&#x884C;&#x987A;&#x5E8F;&#x662F;&#xFF0C; &#x5148;&#x7ED9;&#x7236;&#x7C7B;&#xFF08;superclasses&#xFF09;&#x53D1;&#x9001;&#x6D88;&#x606F;&#xFF0C;&#x518D;&#x7ED9;&#x5B50;&#x7C7B;&#xFF08;subclasses&#xFF09;&#x53D1;&#x9001;&#xFF1B; &#x5148;&#x7ED9;&#x7C7B;&#xFF08;class&#x2019;s own&#xFF09;&#x53D1;&#x9001;&#x6D88;&#x606F;&#xFF0C;&#x518D;&#x7ED9;category&#x53D1;&#x9001;&#x3002;</p>
+<p> &#x7528;&#x4F8B;&#x5B50;&#x8BD5;&#x8BD5;&#xFF1A;</p>
+ <pre>#import &quot;Parent.h&quot;
+
+@interface Son : Parent
+
+@end
+
+@implementation Son
+
++ (void)load
+{
+    NSLog(@&quot;11111%s&quot;,__func__);
+}
+
+@end
+
+@interface Son (Category)
+
+@end
+
+@implementation Son (Category)
+
++ (void)load
+{
+    NSLog(@&quot;11111%s&quot;,__func__);
+}
+
+@end
+
+@implementation Parent
+
++ (void)load
+{
+    NSLog(@&quot;11111%s&quot;,__func__);
+}
+
+@end
+ </pre>
+
+<p>&#x63A7;&#x5236;&#x53F0;&#x8F93;&#x51FA;&#xFF1A;</p>
+<pre>
+2015-07-31 16:15:16.627 TestLoad[50454:1100840] 11111+[Parent load]
+2015-07-31 16:15:16.629 TestLoad[50454:1100840] 11111+[Son load]
+2015-07-31 16:15:16.629 TestLoad[50454:1100840] 11111+[Son(Category) load]
+</pre>
+&#x679C;&#x7136;&#xFF0C;&#x7236;&#x7C7B;&#x6D88;&#x606F;&#x5148;&#x4E8E;&#x5B50;&#x7C7B;&#x53D1;&#x9001;,&#x5B50;&#x7C7B;&#x5148;&#x4E8E;category&#x53D1;&#x9001;&#x3002;
+&#x90A3;&#x5982;&#x679C;&#x6709;&#x591A;&#x4E2A;category&#x5462;&#xFF1F;
+&#x6211;&#x5C1D;&#x8BD5;&#x8FC7;&#x52A0;4&#x4E2A;category&#xFF0C;&#x8C03;&#x7528;&#x987A;&#x5E8F;&#x95EE;&#x9898;
+<pre>
+2015-07-31 17:32:16.655 TestLoad[51278:1143718] 11111+[Parent load]
+2015-07-31 17:32:16.656 TestLoad[51278:1143718] 11111+[Son load]
+2015-07-31 17:32:16.656 TestLoad[51278:1143718] 11111+[Parent(Cate2) load]
+2015-07-31 17:32:16.656 TestLoad[51278:1143718] 11111+[Parent(Cate1) load]
+2015-07-31 17:32:16.656 TestLoad[51278:1143718] 11111+[Parent(Cate4) load]
+2015-07-31 17:32:16.656 TestLoad[51278:1143718] 11111+[Parent(Cate3) load]
+</pre>
+
+<p>&#x5728;&#x82F9;&#x679C;&#x5B98;&#x7F51;&#x4E5F;&#x6CA1;&#x627E;&#x5230;&#x76F8;&#x5E94;&#x7684;&#x8BF4;&#x660E;&#xFF0C;&#x5E94;&#x8BE5;&#x662F;&#x65E0;&#x5E8F;&#x7684;&#xFF0C; &#x6240;&#x4EE5;&#x5C3D;&#x53EF;&#x80FD;&#x7684;&#x9700;&#x8981;&#x907F;&#x514D;&#x4F9D;&#x8D56;&#x591A;&#x4E2A;category&#x7684; +(load)&#x7684;&#x903B;&#x8F91;&#x3002;</p>
+<h2 id="initialize&#x65B9;&#x6CD5;"><a href="#initialize&#x65B9;&#x6CD5;" class="headerlink" title="initialize&#x65B9;&#x6CD5;"></a>initialize&#x65B9;&#x6CD5;</h2><blockquote>
+<p>Initializes the class before it receives its first message.</p>
+</blockquote>
+<p>Initializes&#x5728;&#x4E00;&#x4E2A;&#x7C7B;&#x63A5;&#x53D7;&#x5230;&#x7B2C;&#x4E00;&#x4E2A;&#x6D88;&#x606F;&#x4E4B;&#x524D;&#x8C03;&#x7528;&#xFF0C;&#x5728;runtime&#x4E2D;&#xFF0C;+(void)load&#x65B9;&#x6CD5;&#x4E0D;&#x4F5C;&#x4E3A;&#x7B2C;&#x4E00;&#x4E2A;&#x65B9;&#x6CD5;&#x6807;&#x8BC6;&#xFF0C;&#x5E76;&#x4E14;&#x5728;&#x7A0B;&#x5E8F;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#x91CC;&#xFF0C;runtime&#x53EA;&#x53D1;&#x9001;&#x4E00;&#x6B21;&#x6D88;&#x606F;&#xFF0C;&#x5982;&#x679C;&#x8BE5;&#x7C7B;&#x662F;&#x5B50;&#x7C7B;&#xFF0C;&#x4E14;&#x5B50;&#x7C7B;&#x6CA1;&#x6709;&#x5B9E;&#x73B0;&#xFF0C;+(void)load&#xFF0C;&#x6216;&#x8005;&#x5B50;&#x7C7B;&#x663E;&#x793A;&#x8C03;&#x7528;[super initialize],&#x5219;&#x4F1A;&#x8C03;&#x7528;&#x7236;&#x7C7B;&#x5B9E;&#x73B0;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x7236;&#x7C7B;&#x4F1A;&#x88AB;&#x591A;&#x6B21;&#x8C03;&#x7528;&#x3002;</p>
+<pre>
+#import &quot;Parent.h&quot;
+
+@implementation Son
+
++ (void)load
+{
+    NSLog(@&quot;11111%s&quot;,__func__);
+}
+
+@end
+
+@implementation Parent
+
++ (void)load
+{
+    NSLog(@&quot;11111%s&quot;,__func__);
+}
+
++ (void)initialize
+{
+    NSLog(@&quot;11111%s&quot;,__func__);
+}
+
+@end
+</pre>
+
+<p>&#x63A7;&#x5236;&#x53F0;&#x8F93;&#x51FA;&#xFF1A;</p>
+<pre>
+2015-07-31 17:32:16.656 TestLoad[53305:1309352] 11111+[Parent load]
+2015-07-31 17:32:16.656 TestLoad[53305:1309352] 11111+[Son load]
+2015-07-31 17:32:16.666 TestLoad[53305:1309352] 11111+[Parent initialize]
+2015-07-31 17:32:16.667 TestLoad[53305:1309352] 11111+[Parent initialize]
+</pre>
+
+<p>&#x5982;&#x679C;&#x8BE5;&#x7C7B;&#x6709;category&#xFF0C;&#x5E76;&#x4E14;category&#x4E5F;&#x5B9E;&#x73B0;&#x4E86;+(void)initialize&#xFF0C;&#x90A3;&#x4E48;initialize&#x548C;category&#x7684;&#x5176;&#x4ED6;&#x65B9;&#x6CD5;&#xFF08;&#x9664;load&#x5916;&#xFF09;&#x4E00;&#x6837;&#xFF0C;&#x4F18;&#x5148;&#x8C03;&#x7528;category&#x7684;initialize&#xFF0C;&#x7C7B;&#x672C;&#x8EAB;&#x7684;initialize&#x4E0D;&#x4F1A;&#x88AB;&#x8C03;&#x7528;&#x3002;</p>
+<pre>#import &quot;Son+Cate1.h&quot;
+
+@implementation Son (Cate1)
+
++ (void)initialize
+{
+    NSLog(@&quot;11111%s&quot;,__func__);
+}
+
+@end
+</pre>
+
+<p>&#x63A7;&#x5236;&#x53F0;&#x8F93;&#x51FA;&#xFF1A;</p>
+<pre>
+2015-07-31 17:33:39.453 TestLoad[53376:1313255] 11111+[Parent load]
+2015-07-31 17:33:39.454 TestLoad[53376:1313255] 11111+[Son load]
+2015-07-31 17:33:39.620 TestLoad[53376:1313255] 11111+[Parent initialize]
+2015-07-31 17:33:39.620 TestLoad[53376:1313255] 11111+[Son(Cate1) initialize]
+</pre>
+
+<h2 id="&#x603B;&#x7ED3;"><a href="#&#x603B;&#x7ED3;" class="headerlink" title="&#x603B;&#x7ED3;"></a>&#x603B;&#x7ED3;</h2><p> load&#x548C;initialize&#x7684;&#x5171;&#x6027;</p>
+<ul>
+<li>&#x5982;&#x679C;&#x7236;&#x7C7B;&#x548C;&#x5B50;&#x7C7B;&#x90FD;&#x88AB;&#x8C03;&#x7528;&#xFF0C; &#x7236;&#x7C7B;&#x5148;&#x4E8E;&#x5B50;&#x7C7B;</li>
+<li>&#x7406;&#x8BBA;&#x4E0A;&#x7CFB;&#x7EDF;&#x53EA;&#x4F1A;&#x53D1;&#x9001;&#x4E00;&#x6B21;&#x6D88;&#x606F;</li>
+<li>&#x90FD;&#x662F;&#x5148;&#x4E8E;init&#x65B9;&#x6CD5;&#x8C03;&#x7528;</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/07/31/load和initialize/" data-id="cjh4m8hoe000cfcv4zccg0cyo" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/08/01/记一次比较痛苦的体验/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          痛苦的体验-CGAffineTransform
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/05/02/hexo/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">配置Hexo</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AFNetworking/">AFNetworking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Block/">Block</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CocoaPods/">CocoaPods</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReactNative/">ReactNative</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReactNative-SDWebImage/">ReactNative,SDWebImage</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AFNetworking/" style="font-size: 10px;">AFNetworking</a> <a href="/tags/Block/" style="font-size: 10px;">Block</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/ReactNative/" style="font-size: 20px;">ReactNative</a> <a href="/tags/ReactNative-SDWebImage/" style="font-size: 10px;">ReactNative,SDWebImage</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/05/11/学习笔记 ： 图解HTTP(五)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/10/学习笔记 ： 图解HTTP(四)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/09/学习笔记 ： 图解HTTP(三)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/03/学习笔记 ： 图解HTTP(一)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/03/学习笔记 ： 图解HTTP(二)/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Moyun<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

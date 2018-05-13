@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>使用CocoaPods创建公有库 | Moyun Memory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="&amp;#x672C;&amp;#x6587;&amp;#x53EA;&amp;#x505A;&amp;#x4E2A;&amp;#x4EBA;&amp;#x8BB0;&amp;#x5F55;&amp;#x4F7F;&amp;#x7528;&amp;#x3002;">
+<meta name="keywords" content="CocoaPods">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用CocoaPods创建公有库">
+<meta property="og:url" content="http://yoursite.com/2016/09/01/cocoapods/index.html">
+<meta property="og:site_name" content="Moyun Memory">
+<meta property="og:description" content="&amp;#x672C;&amp;#x6587;&amp;#x53EA;&amp;#x505A;&amp;#x4E2A;&amp;#x4EBA;&amp;#x8BB0;&amp;#x5F55;&amp;#x4F7F;&amp;#x7528;&amp;#x3002;">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-11-02T05:07:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用CocoaPods创建公有库">
+<meta name="twitter:description" content="&amp;#x672C;&amp;#x6587;&amp;#x53EA;&amp;#x505A;&amp;#x4E2A;&amp;#x4EBA;&amp;#x8BB0;&amp;#x5F55;&amp;#x4F7F;&amp;#x7528;&amp;#x3002;">
+  
+    <link rel="alternate" href="/atom.xml" title="Moyun Memory" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Moyun Memory</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">做牛B的产品，有追求的创造者</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="create-cocoapods" class="article article-type-create" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/09/01/cocoapods/" class="article-date">
+  <time datetime="2016-09-01T10:03:34.000Z" itemprop="datePublished">2016-09-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      使用CocoaPods创建公有库
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&#x672C;&#x6587;&#x53EA;&#x505A;&#x4E2A;&#x4EBA;&#x8BB0;&#x5F55;&#x4F7F;&#x7528;&#x3002;<br><a id="more"></a></p>
+<p>1,&#x786E;&#x4FDD;&#x5DE5;&#x4F5C;&#x533A;&#x5173;&#x8054;&#x4E00;&#x4E2A;git, &#x6BD4;&#x5982;&#x516C;&#x6709;&#x5E93;&#x5728;github&#x4E0A;&#x5EFA;&#x4E00;&#x4E2A;&#x4ED3;&#x5E93;&#x5730;&#x5740;&#xFF08;<a href="https://github.com/moyunmo/CMDemo.git&#xFF09;" target="_blank" rel="noopener">https://github.com/moyunmo/CMDemo.git&#xFF09;</a></p>
+<p>2,&#x521B;&#x5EFA;&#x4E00;&#x4E2A;&#x5168;&#x65B0;&#x7684;&#x5DE5;&#x7A0B;&#xFF0C;&#x4F7F;&#x7528;&#x547D;&#x4EE4;</p>
+<pre>
+pod lib create &#x4F60;&#x60F3;&#x8981;&#x7684;pod&#x540D;
+</pre>&#x7136;&#x540E;&#x4F1A;&#x5F39;&#x51FA;&#x4E00;&#x7CFB;&#x5217;&#x7684;&#x9009;&#x9879;
+
+3,cd&#x5230;&#x5F53;&#x524D;&#x5DE5;&#x7A0B;&#x76EE;&#x5F55;&#x4E0B;&#xFF0C;&#x5173;&#x8054;git 
+<pre>
+git remote add origin https://github.com/moyunmo/CMDemo.git
+</pre>
+
+<p>4,&#x5F80;<em>CMDemo/Classes</em>&#x4E0B;&#x6DFB;&#x52A0;&#x6E90;&#x4EE3;&#x7801;</p>
+<p>5,&#x4FEE;&#x6539;CMDemo.podspec&#x914D;&#x7F6E;&#x6587;&#x4EF6;</p>
+<pre>
+Pod::Spec.new do |s|
+  s.name             = &apos;CMDemo&apos; #&#x540D;&#x79F0;
+  s.version          = &apos;0.0.1&apos; #&#x7248;&#x672C;&#x53F7;
+  s.summary          = &apos;Test demo&apos; #&#x7B80;&#x77ED;&#x4ECB;&#x7ECD;
+
+#&#x4E0B;&#x9762;&#x662F;&#x8BE6;&#x7EC6;&#x4ECB;&#x7ECD;
+  s.description      = &apos;Test demo,Test demo,Test demo,Test demo&apos;
+
+  s.homepage         = &apos;https://github.com/moyunmo/CMDemo&apos; #&#x4E3B;&#x9875;,&#x8FD9;&#x91CC;&#x8981;&#x586B;&#x5199;&#x53EF;&#x4EE5;&#x8BBF;&#x95EE;&#x5230;&#x7684;&#x5730;&#x5740;&#xFF0C;&#x4E0D;&#x7136;&#x9A8C;&#x8BC1;&#x4E0D;&#x901A;&#x8FC7;
+  # s.screenshots     = &apos;www.example.com/screenshots_1&apos;, &apos;www.example.com/screenshots_2&apos;  #&#x622A;&#x56FE;
+  s.license          = { :type =&gt; &apos;MIT&apos;, :file =&gt; &apos;LICENSE&apos; } #&#x5F00;&#x6E90;&#x534F;&#x8BAE;
+  s.author           = { &apos;Moyun&apos; =&gt; &apos;moyunmo@hotmail.com&apos; } #&#x4F5C;&#x8005;&#x4FE1;&#x606F;
+  s.source           = { :git =&gt; &apos;https://github.com/moyunmo/CMDemo&apos;, :tag =&gt; &apos;0.0.1&apos; } #&#x9879;&#x76EE;&#x5730;&#x5740;&#xFF0C;&#x8FD9;&#x91CC;&#x4E0D;&#x652F;&#x6301;ssh&#x7684;&#x5730;&#x5740;&#xFF0C;&#x9A8C;&#x8BC1;&#x4E0D;&#x901A;&#x8FC7;&#xFF0C;&#x53EA;&#x652F;&#x6301;HTTP&#x548C;HTTPS&#xFF0C;&#x6700;&#x597D;&#x4F7F;&#x7528;HTTPS
+
+  s.ios.deployment_target = &apos;8.0&apos; #&#x652F;&#x6301;&#x7684;&#x5E73;&#x53F0;&#x53CA;&#x7248;&#x672C;
+
+  s.source_files = &apos;CMDemo/Classes/**/*&apos;   #&#x4EE3;&#x7801;&#x6E90;&#x6587;&#x4EF6;&#x5730;&#x5740;&#xFF0C;**/*&#x8868;&#x793A;Classes&#x76EE;&#x5F55;&#x53CA;&#x5176;&#x5B50;&#x76EE;&#x5F55;&#x4E0B;&#x6240;&#x6709;&#x6587;&#x4EF6;&#xFF0C;&#x5982;&#x679C;&#x6709;&#x591A;&#x4E2A;&#x76EE;&#x5F55;&#x4E0B;&#x5219;&#x7528;&#x9017;&#x53F7;&#x5206;&#x5F00;&#xFF0C;&#x5982;&#x679C;&#x9700;&#x8981;&#x5728;&#x9879;&#x76EE;&#x4E2D;&#x5206;&#x7EC4;&#x663E;&#x793A;&#xFF0C;&#x8FD9;&#x91CC;&#x4E5F;&#x8981;&#x505A;&#x76F8;&#x5E94;&#x7684;&#x8BBE;&#x7F6E;
+
+  # s.resource_bundles = {
+  #   &apos;CMDemo&apos; =&gt; [&apos;CMDemo/Assets/*.png&apos;]
+  # }    #&#x8D44;&#x6E90;&#x6587;&#x4EF6;&#x5730;&#x5740;
+
+  # s.public_header_files = &apos;Pod/Classes/**/*.h&apos; #&#x516C;&#x5F00;&#x5934;&#x6587;&#x4EF6;&#x5730;&#x5740;
+  # s.frameworks = &apos;UIKit&apos;, &apos;MapKit&apos; #&#x6240;&#x9700;&#x7684;framework&#xFF0C;&#x591A;&#x4E2A;&#x7528;&#x9017;&#x53F7;&#x9694;&#x5F00;
+  # s.dependency &apos;AFNetworking&apos;, &apos;~&gt; 2.3&apos; #&#x4F9D;&#x8D56;&#x5173;&#x7CFB;&#xFF0C;&#x8BE5;&#x9879;&#x76EE;&#x6240;&#x4F9D;&#x8D56;&#x7684;&#x5176;&#x4ED6;&#x5E93;&#xFF0C;&#x5982;&#x679C;&#x6709;&#x591A;&#x4E2A;&#x9700;&#x8981;&#x586B;&#x5199;&#x591A;&#x4E2A;s.dependency
+end
+</pre>
+
+<p>6,&#x63D0;&#x4EA4;&#x6E90;&#x7801;&#xFF0C;git tag&#x548C;pod&#x7248;&#x672C;&#x4E00;&#x81F4;</p>
+<pre>
+$ git add .
+$ git commit -m &quot;init commit&quot;
+$ git push origin master
+$ git tag -m &apos;init&apos; &apos;0.0.1&apos;
+$ git push --tags
+</pre>
+
+<p>7,&#x63A8;&#x9001;podSpec</p>
+<p><em>pod trunk me</em> &#xFF0C;&#x68C0;&#x6D4B;&#x662F;&#x5426;&#x6CE8;&#x518C;&#xFF0C;&#x5982;&#x679C;&#x6CA1;&#x6709;,&#x4F7F;&#x7528;<em>pod trunk register</em>&#xFF0C;&#x4E4B;&#x540E;</p>
+<pre>
+$pod trunk push [NAME.podspec] #&#x90E8;&#x7F72;&#x516C;&#x5171;&#x7684;Podspec,&#x540E;&#x9762;&#x52A0;--allow-warnings &#x5141;&#x8BB8;&#x8B66;&#x544A;
+</pre>
+
+<p>8,&#x4F7F;&#x7528;Pod</p>
+<pre>$ pod &apos;CMDemo&apos;, &apos;~&gt; 0.0.1&apos;
+</pre>
+
+<p>9,&#x66F4;&#x65B0;&#x7EF4;&#x62A4;</p>
+<p>&#x5347;&#x7EA7;&#x4EE3;&#x7801; -&gt; &#x6839;&#x636E;&#x5177;&#x4F53;&#x6539;&#x52A8;&#xFF0C;&#x7F16;&#x8F91;name.podspec -&gt; pod lib lint&#x9A8C;&#x8BC1; -&gt; &#x5C06;&#x9879;&#x76EE;&#x63A8;&#x9001;&#x5230;&#x8FDC;&#x7AEF;&#x4ED3;&#x5E93;,&#x6253;&#x4E0A;&#x65B0;&#x7684;tag -&gt; &#x63D0;&#x4EA4;&#x5230;Spec Repo&#x4E2D;&#xFF0C;</p>
+<pre>
+$pod trunk push [NAME.podspec]
+</pre>
+
+<h2 id="&#x4E8C;&#x3001;&#x5176;&#x4ED6;&#x5E38;&#x7528;&#x64CD;&#x4F5C;"><a href="#&#x4E8C;&#x3001;&#x5176;&#x4ED6;&#x5E38;&#x7528;&#x64CD;&#x4F5C;" class="headerlink" title="&#x4E8C;&#x3001;&#x5176;&#x4ED6;&#x5E38;&#x7528;&#x64CD;&#x4F5C;"></a>&#x4E8C;&#x3001;&#x5176;&#x4ED6;&#x5E38;&#x7528;&#x64CD;&#x4F5C;</h2><ul>
+<li>&#x6307;&#x5B9A;&#x79C1;&#x6709;&#x6E90;<pre><code>source &apos;https://github.com/CMSpecs/Specs.git&apos;  
+source &apos;https://github.com/CocoaPods/Specs.git&apos;
+</code></pre></li>
+<li>&#x6307;&#x5B9A;tag<pre><code>pod &apos;Cmall_Base_Utils&apos;,  :git =&gt; &apos;http://git.cmall.com/ios/Cmall_Base.git&apos;, :tag =&gt; &apos;0.0.1&apos;
+</code></pre></li>
+<li>&#x6307;&#x5B9A;commit<pre><code>pod &apos;Cmall_Base_Utils&apos;,  :git =&gt; &apos;http://git.cmall.com/ios/Cmall_Base.git&apos;, :commit =&gt; &apos;1a31b864d1d56b1aaed0816c10bb55cf2e078bb8&apos;
+</code></pre></li>
+<li>&#x4F7F;&#x7528;&#x5B50;&#x4ED3;&#x5E93;<pre><code>pod &apos;CmallSDK/CmallSDK_Base&apos;
+</code></pre>&#x6216;&#x8005;<pre><code>pod &apos;CmallSDK&apos;, :subspecs =&gt; [&apos;CmallSDK_Base&apos;, &apos;CmallSDK_UI&apos;]
+</code></pre></li>
+<li>&#x6307;&#x5B9A;&#x4F9D;&#x8D56;&#x5E93;&#x7684;&#x914D;&#x7F6E;&#x6587;&#x4EF6;<pre><code>pod &apos;PonyDebugger&apos;, :configuration =&gt; [&apos;Release&apos;]
+</code></pre></li>
+<li>&#x8F93;&#x51FA;&#x65E5;&#x5FD7;<pre><code>pod install --verbose
+</code></pre></li>
+<li>install/update&#x63D0;&#x901F;&#x3001;&#x4E0D;&#x66F4;&#x65B0;&#x672C;&#x5730;&#x7D22;&#x5F15;<pre><code>pod install --no-repo-update  
+pod update --no-repo-update
+</code></pre></li>
+<li>pod&#x4E2D;&#x542B;&#x6709;category&#xFF0C;&#x81EA;&#x52A8;&#x7ED9;&#x5DE5;&#x7A0B;&#x6DFB;&#x52A0;-ObjC,&#x5728;podSpec&#x4E2D;&#x6DFB;&#x52A0;<pre><code>s.xcconfig = { &quot;OTHER_LINK_FLAG&quot; =&gt; &apos;$(inherited) -ObjC&apos;}
+</code></pre></li>
+<li>&#x9879;&#x76EE;&#x7F16;&#x8BD1;&#x9047;&#x5230;&#x7B2C;&#x4E00;&#x4E2A;&#x9519;&#x8BEF;&#x7684;&#x65F6;&#x5019;&#x5C31;&#x505C;&#x6B62;<pre><code>&#x5728;&#x540E;&#x9762;&#x6DFB;&#x52A0; --fail-fast
+</code></pre></li>
+</ul>
+<h2 id="&#x4E09;-&#x3001;-&#x4F7F;&#x7528;&#x95EE;&#x9898;"><a href="#&#x4E09;-&#x3001;-&#x4F7F;&#x7528;&#x95EE;&#x9898;" class="headerlink" title="&#x4E09; &#x3001; &#x4F7F;&#x7528;&#x95EE;&#x9898;"></a>&#x4E09; &#x3001; &#x4F7F;&#x7528;&#x95EE;&#x9898;</h2><p>1&#xFF0C;<em>[!] Unable to find a pod with name, author, summary, or descriptionmatching CMDemo</em></p>
+<p>&#x53EF;&#x80FD;&#x539F;&#x56E0;&#xFF0C;<em>pod setup</em>&#x6CA1;&#x6267;&#x884C;&#x6210;&#x529F;&#x3002;1&#xFF09;gem&#x7248;&#x672C;&#x592A;&#x4F4E;&#x3002;2&#xFF09;github&#x8BBF;&#x95EE;&#x4E0D;&#x4E86;&#x3002;3&#xFF09;.cocoapods&#x68C0;&#x7D22;&#x6587;&#x4EF6;&#x6709;&#x95EE;&#x9898;</p>
+<p>1&#xFF09;&#x66F4;&#x65B0;cocoapods&#x3002;</p>
+<pre>
+$ sudo gem update --system
+</pre>
+
+<p>2&#xFF09;&#x68C0;&#x6D4B;github&#x94FE;&#x63A5;</p>
+<pre>
+$ ping github.com
+</pre>
+
+<p>3&#xFF09;<em>rm ~/Library/Caches/CocoaPods/search_index.json</em>,&#x79FB;&#x9664;&#x7D22;&#x5F15;&#xFF0C;&#x91CD;&#x65B0;&#x6267;&#x884C;</p>
+<pre>
+pod search
+</pre>
+
+
+
+<p>&#x53C2;&#x8003;&#x94FE;&#x63A5;&#xFF1A;<a href="http://blog.wtlucky.com/blog/2015/02/26/create-private-podspec/" target="_blank" rel="noopener">http://blog.wtlucky.com/blog/2015/02/26/create-private-podspec/</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/09/01/cocoapods/" data-id="cjh4m8hnk0005fcv4rmodlya0" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CocoaPods/">CocoaPods</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/10/14/jenkins-fastlane/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          iOS Jenkins+Fastlane持续集成
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/08/01/记一次比较痛苦的体验/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">痛苦的体验-CGAffineTransform</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AFNetworking/">AFNetworking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Block/">Block</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CocoaPods/">CocoaPods</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReactNative/">ReactNative</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReactNative-SDWebImage/">ReactNative,SDWebImage</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AFNetworking/" style="font-size: 10px;">AFNetworking</a> <a href="/tags/Block/" style="font-size: 10px;">Block</a> <a href="/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/tags/ReactNative/" style="font-size: 20px;">ReactNative</a> <a href="/tags/ReactNative-SDWebImage/" style="font-size: 10px;">ReactNative,SDWebImage</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/05/11/学习笔记 ： 图解HTTP(五)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/10/学习笔记 ： 图解HTTP(四)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/09/学习笔记 ： 图解HTTP(三)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/03/学习笔记 ： 图解HTTP(一)/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/03/学习笔记 ： 图解HTTP(二)/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Moyun<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
